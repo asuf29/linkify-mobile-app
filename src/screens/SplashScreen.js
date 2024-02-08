@@ -1,12 +1,10 @@
-// SplashScreen.js
-
 import React, { useEffect } from 'react';
 import { View, Image, StyleSheet } from 'react-native';
 
 const SplashScreen = ({ navigation }) => {
   useEffect(() => {
     const timer = setTimeout(() => {
-      navigation.replace('HomeScreen'); 
+      navigation.replace('AuthenticationOptionsScreen'); 
     }, 2000); 
     return () => clearTimeout(timer);
   }, []);
