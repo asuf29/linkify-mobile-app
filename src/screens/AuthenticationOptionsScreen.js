@@ -7,11 +7,11 @@ import tw from 'twrnc';
 
 const AuthenticationOptionsScreen = ({ navigation }) => {
   const handleSignIn = () => {
-    navigation.navigate('SignInScreen');
+    navigation.navigate('LoginScreen');
   };
 
   const handleSignUp = () => {
-    navigation.navigate('SignUpScreen');
+    navigation.navigate('RegisterScreen');
   };
 
   return (
