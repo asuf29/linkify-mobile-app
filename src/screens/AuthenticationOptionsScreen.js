@@ -20,18 +20,18 @@ const AuthenticationOptionsScreen = ({ navigation }) => {
         style={styles.socialInfluencer}
         source={require('./../assets/images/social-influencer.png')}
       />
-      <View style={tw`flex-row gap-x-12`}>  
+      <View style={tw`gap-y-4 w-80`}>  
         <TouchableOpacity 
-          style={[tw`border-2 border-blue-500 bg-blue-500 text-white rounded-md px-4 py-2`, styles.button]} 
+          style={[tw`border-2 border-blue-500 bg-blue-500 text-white rounded-md px-4 py-2 h-12 items-center`, styles.button]} 
           onPress={handleSignIn} 
         >
-          <Text style={tw`text-white`}>Sign In</Text>
+          <Text style={tw`text-white text-center h-full text-base`}>Sign In</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={[tw`border-2 border-blue-500 bg-blue-500 text-white rounded-md px-4 py-2`, styles.button]}  
+          style={[tw`border-2 border-blue-900 bg-blue-900 text-white rounded-md px-4 py-2 h-12 items-center`, styles.button]}  
           onPress={handleSignUp}  
         >
-          <Text style={tw`text-white`}>Sign Up</Text>
+          <Text style={tw`text-white text-center h-full text-base`}>Sign Up</Text>
         </TouchableOpacity>
       </View>
     </View>
