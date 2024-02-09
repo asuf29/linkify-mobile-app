@@ -1,5 +1,9 @@
 import React from 'react';
-import { Text, View, Button, StyleSheet, Image } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import 'tailwindcss/tailwind.css'
+import './../../src/input.css'
+import tw from 'twrnc';
+
 
 const AuthenticationOptionsScreen = ({ navigation }) => {
   const handleSignIn = () => {
@@ -16,15 +20,19 @@ const AuthenticationOptionsScreen = ({ navigation }) => {
         style={styles.socialInfluencer}
         source={require('./../assets/images/social-influencer.png')}
       />
-      <View> 
-        <Button
-          title="Sign In"
+      <View style={tw`flex-row gap-x-12`}>  
+        <TouchableOpacity 
+          style={[tw`border-2 border-blue-500 bg-blue-500 text-white rounded-md px-4 py-2`, styles.button]} // stilleri birleştiriyoruz
           onPress={handleSignIn} 
-        />
-        <Button
-          title="Sign Up"
+        >
+          <Text style={tw`text-white`}>Sign In</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          style={[tw`border-2 border-blue-500 bg-blue-500 text-white rounded-md px-4 py-2`, styles.button]}  // stilleri birleştiriyoruz
           onPress={handleSignUp}  
-        />
+        >
+          <Text style={tw`text-white`}>Sign Up</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
