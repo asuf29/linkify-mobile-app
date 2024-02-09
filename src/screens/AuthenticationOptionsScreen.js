@@ -22,13 +22,13 @@ const AuthenticationOptionsScreen = ({ navigation }) => {
       />
       <View style={tw`flex-row gap-x-12`}>  
         <TouchableOpacity 
-          style={[tw`border-2 border-blue-500 bg-blue-500 text-white rounded-md px-4 py-2`, styles.button]} // stilleri birleştiriyoruz
+          style={[tw`border-2 border-blue-500 bg-blue-500 text-white rounded-md px-4 py-2`, styles.button]} 
           onPress={handleSignIn} 
         >
           <Text style={tw`text-white`}>Sign In</Text>
         </TouchableOpacity>
         <TouchableOpacity
-          style={[tw`border-2 border-blue-500 bg-blue-500 text-white rounded-md px-4 py-2`, styles.button]}  // stilleri birleştiriyoruz
+          style={[tw`border-2 border-blue-500 bg-blue-500 text-white rounded-md px-4 py-2`, styles.button]}  
           onPress={handleSignUp}  
         >
           <Text style={tw`text-white`}>Sign Up</Text>
