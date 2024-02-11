@@ -1,8 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { View, TextInput, TouchableOpacity, Text, Image } from 'react-native';
+import {
+  View,
+  TextInput,
+  TouchableOpacity,
+  Text,
+  Image,
+  StyleSheet,
+  Button,
+} from 'react-native';
 import tw from 'twrnc';
 
-const LoginScreen = () => {
+const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessages, setErrorMessages] = useState({
@@ -48,6 +56,10 @@ const LoginScreen = () => {
     }
   };
 
+  const handlePress = () => {
+    navigation.navigate('RegisterScreen');
+  };
+
   return (
     <View style={tw`flex p-4 justify-center pt-16`}>
       <View
@@ -81,13 +93,26 @@ const LoginScreen = () => {
       >
         <Text style={tw`text-white font-bold text-base`}>Submit</Text>
       </TouchableOpacity>
-      {Object.values(errorMessages).map((errorMessage, index) => (
-        <Text style={tw`text-red-500 text-lg mb-3`} key={index}>
-          {errorMessage}
-        </Text>
-      ))}
+      <View style={styles.errorMessage}>
+        {Object.values(errorMessages).map((errorMessage, index) => (
+          <Text style={tw`text-red-500 text-lg mb-3`} key={index}>
+            {errorMessage}
+          </Text>
+        ))}
+      </View>
+      <View style={tw`flex flex-row gap-x-2 justify-center items-center mt-6`}>
+        <Text style={tw`text-gray-400 text-base`}>Don't Have Account?</Text>
+        <TouchableOpacity style={tw`text-gray-700`} onPress={handlePress}>
+          <Text style={tw`text-base`}>Sign Up</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
 
+const styles = StyleSheet.create({
+  errorMessage: {
+    display: 'none',
+  },
+});
 export default LoginScreen;
