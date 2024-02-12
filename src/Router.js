@@ -7,6 +7,7 @@ import SplashScreen from './screens/SplashScreen';
 import AuthenticationOptionsScreen from './screens/AuthenticationOptionsScreen';
 import LoginScreen from './screens/LoginScreen';
 import RegisterScreen from './screens/RegisterScreen';
+import HomeScreen from './screens/HomeScreen';
 
 const Stack = createStackNavigator();
 
@@ -15,12 +16,16 @@ const App = () => {
     <NavigationContainer>
       <Stack.Navigator initialRouteName="SplashScreen" headerShown="false">
         <Stack.Screen name="SplashScreen" component={SplashScreen} />
-        <Stack.Screen name="AuthenticationOptionsScreen" component={AuthenticationOptionsScreen} />
+        <Stack.Screen
+          name="AuthenticationOptionsScreen"
+          component={AuthenticationOptionsScreen}
+        />
         <Stack.Screen name="LoginScreen" component={LoginScreen} />
+        <Stack.Screen name="HomeScreen" component={HomeScreen} />
         <Stack.Screen name="RegisterScreen" component={RegisterScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
-}
+};
 
 export default App;

@@ -50,6 +50,7 @@ const LoginScreen = ({ navigation }) => {
 
   const handleSubmit = () => {
     if (isFormValid) {
+      navigation.navigate('HomeScreen');
       console.log('Form submitted successfully');
     } else {
       console.log('Form has errors. Please correct them.');
