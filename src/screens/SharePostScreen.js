@@ -1,12 +1,12 @@
 import React from 'react';
 import { Text, View } from 'react-native';
 
-function HomeScreen() {
+function SharePostScreen() {
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <Text>Home Screen</Text>
+      <Text>Share Post Screen</Text>
     </View>
   );
 }
 
-export default HomeScreen;
+export default SharePostScreen;
