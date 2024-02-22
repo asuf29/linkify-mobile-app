@@ -20,7 +20,7 @@ const Tab = createBottomTabNavigator();
 
 const MainTabNavigator = () => {
   return (
-    <Tab.Navigator>
+    <Tab.Navigator screenOptions={{ headerShown: false }}>
       <Tab.Screen
         name="tab1"
         component={HomeScreen}
@@ -102,7 +102,11 @@ const MainTabNavigator = () => {
 const App = () => {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="SplashScreen" headerShown={false}>
+      <Stack.Navigator
+        screenOptions={{ headerShown: false }}
+        initialRouteName="SplashScreen"
+        headerShown={false}
+      >
         <Stack.Screen name="SplashScreen" component={SplashScreen} />
         <Stack.Screen
           name="AuthenticationOptionsScreen"
