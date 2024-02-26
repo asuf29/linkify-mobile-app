@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from "react";
 import {
+  ScrollView,
   View,
   Text,
   TextInput,
   Image,
   TouchableOpacity,
   StyleSheet,
+  KeyboardAvoidingView,
 } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import tw from "twrnc";
@@ -24,6 +26,8 @@ const RegisterScreen = ({ navigation }) => {
     confirmpassword: "",
   });
 
+  const [registrationError, setRegistrationError] = useState("");
+
   const [isFormValid, setIsFormValid] = useState(false);
 
   useEffect(() => {
@@ -32,6 +36,8 @@ const RegisterScreen = ({ navigation }) => {
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [hasFocusedEmail, setHasFocusedEmail] = useState(false);
+  const [hasFocusedPassword, setHasFocusedPassword] = useState(false);
 
   const handleTogglePassword = () => {
     setShowPassword(!showPassword);
@@ -44,23 +50,21 @@ const RegisterScreen = ({ navigation }) => {
   const validateForm = () => {
     let errors = {};
 
-    if (!email) {
+    if ((!email.trim() || !/\S+@\S+\.\S+/.test(email)) && hasFocusedEmail) {
       errors.email = "Email is required";
-    } else if (!/\S+@\S+\.\S+/.test(email)) {
-      errors.email = "Email is invalid";
     } else {
       errors.email = "";
     }
 
-    if (!password) {
+    if (!password && hasFocusedPassword) {
       errors.password = "Password is required";
-    } else if (password.length < 6) {
+    } else if (password.trim().length < 6) {
       errors.password = "Password must be at least 6 characters";
     } else {
       errors.password = "";
     }
 
-    if (!confirmpassword) {
+    if (!confirmpassword && hasFocusedPassword) {
       errors.confirmpassword = "Confirm Password is required";
     } else if (confirmpassword !== password) {
       errors.confirmpassword = "Passwords do not match";
@@ -89,15 +93,16 @@ const RegisterScreen = ({ navigation }) => {
   const handleRegister = () => {
     const isValid = validateForm();
 
-    if (isValid) {
+    if (!isValid) {
+      setRegistrationError("Please fill in all required fields.");
+    } else {
       console.log("Full Name:", fullName);
       console.log("E-mail:", email);
       console.log("Password:", password);
       console.log("ConfirmPassword:", confirmpassword);
       console.log("Username:", username);
       console.log("Registration successful!");
-    } else {
-      console.log("Registration failed. Please check the form.");
+      setRegistrationError("");
     }
   };
 
@@ -106,120 +111,158 @@ const RegisterScreen = ({ navigation }) => {
   };
 
   return (
-    <View style={tw`flex p-4 justify-center pt-16`}>
-      <View
-        style={tw`flex flex-row justify-center items-center w-full h-36 mb-12 bg-black rounded-2xl `}
-      >
-        <Image
-          style={tw`w-24 h-24`}
-          source={require("./../assets/images/logo.png")}
-        />
-        <Text style={tw`text-white text-3xl`}>LINKIFY</Text>
-      </View>
-      <View style={tw`mb-2`}>
-        <Text style={tw`text-gray-500 text-sm`}>Full Name</Text>
-        <TextInput
-          style={tw`border-2 border-gray-300 rounded-md h-12 px-4 mb-4`}
-          placeholder="Your name and surname"
-          value={fullName}
-          onChangeText={(text) => setFullname(text)}
-        />
-      </View>
-      <View style={tw`mb-2`}>
-        <Text style={tw`text-gray-500 text-sm`}>E-mail</Text>
-        <TextInput
-          style={tw`border-2 border-gray-300 rounded-md h-12 px-4 mb-4`}
-          placeholder="E-mail Address"
-          value={email}
-          onChangeText={(text) => setEmail(text)}
-        />
-      </View>
-
-      <View style={tw`mb-2`}>
-        <Text style={tw`text-gray-500 text-sm`}>Password</Text>
+    <ScrollView>
+      <View style={tw`flex p-4 justify-center pt-16`}>
         <View
-          style={tw`flex-row items-center border-2 border-gray-300 rounded-md h-12 px-4 mb-4`}
+          style={tw`flex flex-row justify-center items-center w-full h-36 mb-12 bg-black rounded-2xl `}
         >
-          <TextInput
-            style={tw`flex-1`}
-            placeholder="Password"
-            secureTextEntry={!showPassword}
-            value={password}
-            onChangeText={(text) => setPassword(text)}
+          <Image
+            style={tw`w-24 h-24`}
+            source={require("./../assets/images/logo.png")}
           />
-          <TouchableOpacity onPress={handleTogglePassword}>
-            <Icon
-              name={showPassword ? "eye-slash" : "eye"}
-              size={20}
-              color="gray"
-            />
-          </TouchableOpacity>
+          <Text style={tw`text-white text-3xl`}>LINKIFY</Text>
         </View>
-      </View>
-      <View style={tw`mb-2`}>
-        <Text style={tw`text-gray-500 text-sm`}>Confirm Password</Text>
-        <View
-          style={[
-            tw`flex-row items-center border-2 border-gray-300 rounded-md h-12 px-4 mb-4`,
-            password !== confirmpassword ? tw`border-red-500` : null,
-          ]}
-        >
+        <View style={tw`mb-2`}>
+          <Text style={tw`text-gray-500 text-sm`}>Full Name</Text>
           <TextInput
+            style={tw`border-2 border-gray-300 rounded-md h-12 px-4 mb-4`}
+            placeholder="Your name and surname"
+            autoCapitalize="none"
+            value={fullName}
+            onChangeText={(text) => setFullname(text)}
+          />
+        </View>
+        <View style={tw`mb-2`}>
+          <Text style={tw`text-gray-500 text-sm`}>E-mail</Text>
+          <TextInput
+            style={tw`border-2 border-gray-300 rounded-md h-12 px-4 mb-4 ${
+              (errorMessages.email && hasFocusedEmail) || !email.trim()
+                ? "mb-0"
+                : "mb-4"
+            }`}
+            placeholder="E-mail Address"
+            autoCapitalize="none"
+            value={email}
+            onFocus={() => setHasFocusedEmail(true)}
+            onChangeText={(text) => {
+              setEmail(text);
+            }}
+          />
+          {(errorMessages.email && hasFocusedEmail) || !email.trim() ? (
+            <Text style={tw`text-red-500 text-sm`}>{errorMessages.email}</Text>
+          ) : null}
+        </View>
+
+        <View style={tw`mb-2`}>
+          <Text style={tw`text-gray-500 text-sm`}>Password</Text>
+          <View
+            style={tw`flex-row items-center border-2 border-gray-300 rounded-md h-12 px-4 mb-4 ${
+              errorMessages.password && hasFocusedPassword ? "mb-0" : "mb-4"
+            }`}
+          >
+            <TextInput
+              style={tw`flex-1`}
+              placeholder="Password"
+              autoCapitalize="none"
+              secureTextEntry={!showPassword}
+              value={password}
+              onFocus={() => setHasFocusedPassword(true)}
+              onChangeText={(text) => setPassword(text)}
+            />
+            <TouchableOpacity onPress={handleTogglePassword}>
+              <Icon
+                name={showPassword ? "eye-slash" : "eye"}
+                size={20}
+                color="gray"
+              />
+            </TouchableOpacity>
+          </View>
+          {errorMessages.password && hasFocusedPassword ? (
+            <Text style={tw`text-red-500 text-sm`}>
+              {errorMessages.password}
+            </Text>
+          ) : null}
+        </View>
+        <View style={tw`mb-2`}>
+          <Text style={tw`text-gray-500 text-sm`}>Confirm Password</Text>
+          <View
             style={[
-              tw`flex-1`,
+              tw`flex-row items-center border-2 border-gray-300 rounded-md h-12 px-4 mb-4 ${
+                errorMessages.confirmpassword && hasFocusedPassword
+                  ? "mb-0"
+                  : "mb-4"
+              }`,
               password !== confirmpassword ? tw`border-red-500` : null,
             ]}
-            placeholder="Confirm Password"
-            secureTextEntry={!showConfirmPassword}
-            value={confirmpassword}
-            onChangeText={(text) => setConfirmPassword(text)}
-          />
-          <TouchableOpacity onPress={handleToggleConfirmPassword}>
-            <Icon
-              name={showConfirmPassword ? "eye-slash" : "eye"}
-              size={20}
-              color="gray"
+          >
+            <TextInput
+              style={[
+                tw`flex-1`,
+                password !== confirmpassword ? tw`border-red-500` : null,
+              ]}
+              placeholder="Confirm Password"
+              autoCapitalize="none"
+              secureTextEntry={!showConfirmPassword}
+              value={confirmpassword}
+              onChangeText={(text) => setConfirmPassword(text)}
             />
+            <TouchableOpacity onPress={handleToggleConfirmPassword}>
+              <Icon
+                name={showConfirmPassword ? "eye-slash" : "eye"}
+                size={20}
+                color="gray"
+              />
+            </TouchableOpacity>
+          </View>
+          {errorMessages.confirmpassword ? (
+            <Text style={tw`text-red-500 text-sm`}>
+              {errorMessages.confirmpassword}
+            </Text>
+          ) : null}
+        </View>
+        <View style={tw`mb-2`}>
+          <Text style={tw`text-gray-500 text-sm`}>Username</Text>
+          <TextInput
+            style={tw`border-2 border-gray-300 rounded-md h-12 px-4 mb-4`}
+            placeholder="Username"
+            value={username}
+            onChangeText={(text) => setUsername(text)}
+          />
+        </View>
+
+        <TouchableOpacity
+          style={[
+            tw`border-2 border-black bg-black text-white rounded-md px-4 py-2 h-12 items-center m-4`,
+            isFormValid ? "" : "opacity-50",
+          ]}
+          disabled={!isFormValid}
+          onPress={handleRegister}
+        >
+          <Text style={tw`text-white font-bold text-base`}>Create Account</Text>
+        </TouchableOpacity>
+        <View style={styles.errorMessage}>
+          {registrationError ? (
+            <Text style={tw`text-red-500 text-lg mb-3`}>
+              {registrationError}
+            </Text>
+          ) : null}
+          {Object.values(errorMessages).map((errorMessage, index) => (
+            <Text style={tw`text-red-500 text-lg mb-3`} key={index}>
+              {errorMessage}
+            </Text>
+          ))}
+        </View>
+
+        <View style={tw`flex flex-row gap-x-2 justify-center items-center m-6`}>
+          <Text style={tw`text-gray-400 text-base`}>
+            If you already have an account
+          </Text>
+          <TouchableOpacity style={tw`text-gray-700`} onPress={handlePress}>
+            <Text style={tw`text-base`}>Sign In</Text>
           </TouchableOpacity>
         </View>
       </View>
-      <View style={tw`mb-2`}>
-        <Text style={tw`text-gray-500 text-sm`}>Username</Text>
-        <TextInput
-          style={tw`border-2 border-gray-300 rounded-md h-12 px-4 mb-4`}
-          placeholder="Username"
-          value={username}
-          onChangeText={(text) => setUsername(text)}
-        />
-      </View>
-
-      <TouchableOpacity
-        style={[
-          tw`border-2 border-black bg-black text-white rounded-md px-4 py-2 h-12 items-center`,
-          isFormValid ? "" : "opacity-50",
-        ]}
-        disabled={!isFormValid}
-        onPress={handleRegister}
-      >
-        <Text style={tw`text-white font-bold text-base`}>Create Account</Text>
-      </TouchableOpacity>
-      <View style={styles.errorMessage}>
-        {Object.values(errorMessages).map((errorMessage, index) => (
-          <Text style={tw`text-red-500 text-lg mb-3`} key={index}>
-            {errorMessage}
-          </Text>
-        ))}
-      </View>
-
-      <View style={tw`flex flex-row gap-x-2 justify-center items-center mt-6`}>
-        <Text style={tw`text-gray-400 text-base`}>
-          If you already have an account
-        </Text>
-        <TouchableOpacity style={tw`text-gray-700`} onPress={handlePress}>
-          <Text style={tw`text-base`}>Sign In</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
+    </ScrollView>
   );
 };
 
