@@ -7,8 +7,11 @@ import {
   Image,
   StyleSheet,
   Button,
+  Alert,
 } from 'react-native';
 import tw from 'twrnc';
+import axios from 'axios';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
@@ -47,21 +50,56 @@ const LoginScreen = ({ navigation }) => {
     setIsFormValid(
       Object.values(errors).every((errorMessage) => errorMessage === '')
     );
-    console.log(errorMessages["email"]);
   };
 
   const handleSubmit = () => {
-    console.log(errorMessageVisible);
     if (isFormValid) {
-      navigation.navigate('HomeScreen');
-      console.log('Form submitted successfully');
       setErrorMessageVisible(false);
+      const data = {
+        email: email,
+        password: password
+      };
+      
+      axios.post('https://linkify-backend-test-94b3648c3afa.herokuapp.com/api/auth/sessions', data)
+          .then(response => {
+            const code = response.data.code;
+            if(code === 200) {
+              storeData(response.data.data.token);
+              getData().then((value) => console.log(value));
+              navigation.navigate('HomeScreen');
+              //save token to local storage
+            } else {
+              Alert.alert('Error', response.data.message);
+            }
+          })
+          .catch(error => {
+            console.error("Error sending data: ", error);
+          });
     } else {
-      console.log('Form is invalid');
       setErrorMessageVisible(true);
-      console.log(errorMessageVisible);
     }
   };
+
+  const storeData = async (value) => {
+    try {
+      await AsyncStorage.setItem('token', value);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  const getData = async () => {
+    try {
+      const value = await AsyncStorage.getItem('token')
+      if(value !== null) {
+        return value;
+      }else {
+        return null;
+      }
+    } catch(e) {
+      return null;
+    }
+  }
 
   const handlePress = () => {
     navigation.navigate('RegisterScreen');
@@ -82,6 +120,7 @@ const LoginScreen = ({ navigation }) => {
         style={tw`border-2 border-gray-300 rounded-md h-12 px-4 mb-2`}
         onChangeText={(text) => setEmail(text)}
         value={email}
+        autoCapitalize='none'
         placeholder="Email"
       />
       <View  style={[errorMessageVisible ? styles.visible : styles.hidden]}>
@@ -95,6 +134,7 @@ const LoginScreen = ({ navigation }) => {
         style={tw`border-2 border-gray-300 rounded-md h-12 px-4 mb-2`}
         onChangeText={(text) => setPassword(text)}
         value={password}
+        autoCapitalize='none'
         placeholder="Password"
       />
       <View  style={[errorMessageVisible ? styles.visible : styles.hidden]}>
