@@ -7,7 +7,6 @@ import {
   Image,
   TouchableOpacity,
   StyleSheet,
-  KeyboardAvoidingView,
 } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import tw from "twrnc";
@@ -27,7 +26,7 @@ const RegisterScreen = ({ navigation }) => {
   });
 
   const [registrationError, setRegistrationError] = useState("");
-
+  const [errorMessageVisible, setErrorMessageVisible] = useState(false);
   const [isFormValid, setIsFormValid] = useState(false);
 
   useEffect(() => {
@@ -49,6 +48,12 @@ const RegisterScreen = ({ navigation }) => {
 
   const validateForm = () => {
     let errors = {};
+
+    if (!fullName && hasFocusedPassword) {
+      errors.fullName = "Full Name is required";
+    } else {
+      errors.fullName = "";
+    }
 
     if ((!email.trim() || !/\S+@\S+\.\S+/.test(email)) && hasFocusedEmail) {
       errors.email = "Email is required";
@@ -72,6 +77,12 @@ const RegisterScreen = ({ navigation }) => {
       errors.confirmpassword = "";
     }
 
+    if (!username && hasFocusedPassword) {
+      errors.username = "Username is required";
+    } else {
+      errors.username = "";
+    }
+
     setErrorMessages(errors);
     setIsFormValid(
       Object.values(errors).every((errorMessage) => errorMessage === "")
@@ -91,18 +102,15 @@ const RegisterScreen = ({ navigation }) => {
     }
   };
   const handleRegister = () => {
-    const isValid = validateForm();
-
-    if (!isValid) {
-      setRegistrationError("Please fill in all required fields.");
+    console.log(errorMessageVisible);
+    if (isFormValid) {
+      navigation.navigate("HomeScreen");
+      console.log("Form submitted successfully");
+      setErrorMessageVisible(false);
     } else {
-      console.log("Full Name:", fullName);
-      console.log("E-mail:", email);
-      console.log("Password:", password);
-      console.log("ConfirmPassword:", confirmpassword);
-      console.log("Username:", username);
-      console.log("Registration successful!");
-      setRegistrationError("");
+      console.log("Form is invalid");
+      setErrorMessageVisible(true);
+      console.log(errorMessageVisible);
     }
   };
 
@@ -125,12 +133,28 @@ const RegisterScreen = ({ navigation }) => {
         <View style={tw`mb-2`}>
           <Text style={tw`text-gray-500 text-sm`}>Full Name</Text>
           <TextInput
-            style={tw`border-2 border-gray-300 rounded-md h-12 px-4 mb-4`}
+            style={tw`flex-row items-center border-2 border-gray-300 rounded-md h-12 px-4 mb-4 ${
+              errorMessages.fullName && hasFocusedPassword ? "mb-0" : "mb-4"
+            }`}
             placeholder="Your name and surname"
             autoCapitalize="none"
             value={fullName}
             onChangeText={(text) => setFullname(text)}
           />
+        </View>
+        {errorMessages.fullName && hasFocusedPassword ? (
+          <Text style={[tw`text-red-500 text-sm`, styles.errorMessage]}>
+            {errorMessages.fullName || error}
+          </Text>
+        ) : null}
+        <View style={[errorMessageVisible ? styles.visible : styles.hidden]}>
+          {Object.values([errorMessages["fullName"]]).map(
+            (errorMessage, index) => (
+              <Text style={tw`text-red-500 text-sm mb-3`} key={index}>
+                {errorMessage}
+              </Text>
+            )
+          )}
         </View>
         <View style={tw`mb-2`}>
           <Text style={tw`text-gray-500 text-sm`}>E-mail</Text>
@@ -149,8 +173,19 @@ const RegisterScreen = ({ navigation }) => {
             }}
           />
           {(errorMessages.email && hasFocusedEmail) || !email.trim() ? (
-            <Text style={tw`text-red-500 text-sm`}>{errorMessages.email}</Text>
+            <Text style={[tw`text-red-500 text-sm`, styles.errorMessage]}>
+              {errorMessages.email}
+            </Text>
           ) : null}
+        </View>
+        <View style={[errorMessageVisible ? styles.visible : styles.hidden]}>
+          {Object.values([errorMessages["email"]]).map(
+            (errorMessage, index) => (
+              <Text style={tw`text-red-500 text-sm mb-3`} key={index}>
+                {errorMessage}
+              </Text>
+            )
+          )}
         </View>
 
         <View style={tw`mb-2`}>
@@ -178,21 +213,29 @@ const RegisterScreen = ({ navigation }) => {
             </TouchableOpacity>
           </View>
           {errorMessages.password && hasFocusedPassword ? (
-            <Text style={tw`text-red-500 text-sm`}>
+            <Text style={[tw`text-red-500 text-sm`, styles.errorMessage]}>
               {errorMessages.password}
             </Text>
           ) : null}
+          <View style={[errorMessageVisible ? styles.visible : styles.hidden]}>
+            {Object.values([errorMessages["password"]]).map(
+              (errorMessage, index) => (
+                <Text style={tw`text-red-500 text-sm mb-3`} key={index}>
+                  {errorMessage}
+                </Text>
+              )
+            )}
+          </View>
         </View>
         <View style={tw`mb-2`}>
           <Text style={tw`text-gray-500 text-sm`}>Confirm Password</Text>
           <View
             style={[
-              tw`flex-row items-center border-2 border-gray-300 rounded-md h-12 px-4 mb-4 ${
+              tw`flex-row items-center border-2 border-gray-300 rounded-md h-12 px-4 mb-4, ${
                 errorMessages.confirmpassword && hasFocusedPassword
                   ? "mb-0"
                   : "mb-4"
               }`,
-              password !== confirmpassword ? tw`border-red-500` : null,
             ]}
           >
             <TextInput
@@ -206,6 +249,7 @@ const RegisterScreen = ({ navigation }) => {
               value={confirmpassword}
               onChangeText={(text) => setConfirmPassword(text)}
             />
+
             <TouchableOpacity onPress={handleToggleConfirmPassword}>
               <Icon
                 name={showConfirmPassword ? "eye-slash" : "eye"}
@@ -215,19 +259,44 @@ const RegisterScreen = ({ navigation }) => {
             </TouchableOpacity>
           </View>
           {errorMessages.confirmpassword ? (
-            <Text style={tw`text-red-500 text-sm`}>
+            <Text style={[tw`text-red-500 text-sm`, styles.errorMessage]}>
               {errorMessages.confirmpassword}
             </Text>
           ) : null}
+          <View style={[errorMessageVisible ? styles.visible : styles.hidden]}>
+            {Object.values([errorMessages["confirmpassword"]]).map(
+              (errorMessage, index) => (
+                <Text style={tw`text-red-500 text-sm mb-3`} key={index}>
+                  {errorMessage}
+                </Text>
+              )
+            )}
+          </View>
         </View>
         <View style={tw`mb-2`}>
           <Text style={tw`text-gray-500 text-sm`}>Username</Text>
           <TextInput
-            style={tw`border-2 border-gray-300 rounded-md h-12 px-4 mb-4`}
+            style={tw`flex-row items-center border-2 border-gray-300 rounded-md h-12 px-4 mb-4 ${
+              errorMessages.username && hasFocusedPassword ? "mb-0" : "mb-4"
+            }`}
             placeholder="Username"
             value={username}
             onChangeText={(text) => setUsername(text)}
           />
+        </View>
+        {errorMessages.username && hasFocusedPassword ? (
+          <Text style={[tw`text-red-500 text-sm`, styles.errorMessage]}>
+            {errorMessages.username || error}
+          </Text>
+        ) : null}
+        <View style={[errorMessageVisible ? styles.visible : styles.hidden]}>
+          {Object.values([errorMessages["username"]]).map(
+            (errorMessage, index) => (
+              <Text style={tw`text-red-500 text-sm mb-3`} key={index}>
+                {errorMessage}
+              </Text>
+            )
+          )}
         </View>
 
         <TouchableOpacity
@@ -235,8 +304,7 @@ const RegisterScreen = ({ navigation }) => {
             tw`border-2 border-black bg-black text-white rounded-md px-4 py-2 h-12 items-center m-4`,
             isFormValid ? "" : "opacity-50",
           ]}
-          disabled={!isFormValid}
-          onPress={handleRegister}
+          onPress={() => handleRegister()}
         >
           <Text style={tw`text-white font-bold text-base`}>Create Account</Text>
         </TouchableOpacity>
@@ -268,6 +336,12 @@ const RegisterScreen = ({ navigation }) => {
 
 const styles = StyleSheet.create({
   errorMessage: {
+    display: "none",
+  },
+  visible: {
+    display: "flex",
+  },
+  hidden: {
     display: "none",
   },
 });
