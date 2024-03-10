@@ -17,6 +17,7 @@ const LoginScreen = ({ navigation }) => {
     email: '',
     password: '',
   });
+  const [errorMessageVisible, setErrorMessageVisible] = useState(false);
   const [isFormValid, setIsFormValid] = useState(false);
 
   useEffect(() => {
@@ -46,14 +47,19 @@ const LoginScreen = ({ navigation }) => {
     setIsFormValid(
       Object.values(errors).every((errorMessage) => errorMessage === '')
     );
+    console.log(errorMessages["email"]);
   };
 
   const handleSubmit = () => {
+    console.log(errorMessageVisible);
     if (isFormValid) {
       navigation.navigate('HomeScreen');
       console.log('Form submitted successfully');
+      setErrorMessageVisible(false);
     } else {
-      console.log('Form has errors. Please correct them.');
+      console.log('Form is invalid');
+      setErrorMessageVisible(true);
+      console.log(errorMessageVisible);
     }
   };
 
@@ -73,34 +79,40 @@ const LoginScreen = ({ navigation }) => {
         <Text style={tw`text-white text-3xl`}>LINKIFY</Text>
       </View>
       <TextInput
-        style={tw`border-2 border-gray-300 rounded-md h-12 px-4 mb-4`}
+        style={tw`border-2 border-gray-300 rounded-md h-12 px-4 mb-2`}
         onChangeText={(text) => setEmail(text)}
         value={email}
         placeholder="Email"
       />
+      <View  style={[errorMessageVisible ? styles.visible : styles.hidden]}>
+        {Object.values([errorMessages["email"]]).map((errorMessage, index) => (
+          <Text style={tw`text-red-500 text-sm mb-3`} key={index}>
+            {errorMessage}
+          </Text>
+        ))}
+      </View>
       <TextInput
-        style={tw`border-2 border-gray-300 rounded-md h-12 px-4 mb-4`}
+        style={tw`border-2 border-gray-300 rounded-md h-12 px-4 mb-2`}
         onChangeText={(text) => setPassword(text)}
         value={password}
         placeholder="Password"
       />
+      <View  style={[errorMessageVisible ? styles.visible : styles.hidden]}>
+        {Object.values([errorMessages["password"]]).map((errorMessage, index) => (
+          <Text style={tw`text-red-500 text-sm mb-3`} key={index}>
+            {errorMessage}
+          </Text>
+        ))}
+      </View>
       <TouchableOpacity
         style={[
           tw`border-2 border-black bg-black text-white rounded-md px-4 py-2 h-12 items-center`,
           isFormValid ? '' : 'opacity-50',
         ]}
-        disabled={!isFormValid}
         onPress={handleSubmit}
       >
         <Text style={tw`text-white font-bold text-base`}>Submit</Text>
       </TouchableOpacity>
-      <View style={styles.errorMessage}>
-        {Object.values(errorMessages).map((errorMessage, index) => (
-          <Text style={tw`text-red-500 text-lg mb-3`} key={index}>
-            {errorMessage}
-          </Text>
-        ))}
-      </View>
       <View style={tw`flex flex-row gap-x-2 justify-center items-center mt-6`}>
         <Text style={tw`text-gray-400 text-base`}>Don't Have Account?</Text>
         <TouchableOpacity style={tw`text-gray-700`} onPress={handlePress}>
@@ -113,6 +125,12 @@ const LoginScreen = ({ navigation }) => {
 
 const styles = StyleSheet.create({
   errorMessage: {
+    display: 'none',
+  },
+  visible: {
+    display: 'flex',
+  },
+  hidden: {
     display: 'none',
   },
 });
