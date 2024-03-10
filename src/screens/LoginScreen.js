@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import tw from 'twrnc';
 import axios from 'axios';
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
@@ -52,7 +53,6 @@ const LoginScreen = ({ navigation }) => {
   };
 
   const handleSubmit = () => {
-    console.log(errorMessageVisible);
     if (isFormValid) {
       setErrorMessageVisible(false);
       const data = {
@@ -64,6 +64,8 @@ const LoginScreen = ({ navigation }) => {
           .then(response => {
             const code = response.data.code;
             if(code === 200) {
+              storeData(response.data.data.token);
+              getData().then((value) => console.log(value));
               navigation.navigate('HomeScreen');
               //save token to local storage
             } else {
@@ -75,9 +77,29 @@ const LoginScreen = ({ navigation }) => {
           });
     } else {
       setErrorMessageVisible(true);
-      console.log(errorMessageVisible);
     }
   };
+
+  const storeData = async (value) => {
+    try {
+      await AsyncStorage.setItem('token', value);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  const getData = async () => {
+    try {
+      const value = await AsyncStorage.getItem('token')
+      if(value !== null) {
+        return value;
+      }else {
+        return null;
+      }
+    } catch(e) {
+      return null;
+    }
+  }
 
   const handlePress = () => {
     navigation.navigate('RegisterScreen');
