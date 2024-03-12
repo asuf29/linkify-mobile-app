@@ -11,7 +11,7 @@ import {
 } from 'react-native';
 import tw from 'twrnc';
 import axios from 'axios';
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
@@ -22,10 +22,31 @@ const LoginScreen = ({ navigation }) => {
   });
   const [errorMessageVisible, setErrorMessageVisible] = useState(false);
   const [isFormValid, setIsFormValid] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     validateForm();
   }, [email, password]);
+
+  useEffect(() => {
+    const checkToken = async () => {
+      try {
+        const isValid = await verifyToken();
+
+        if (isValid) {
+          navigation.navigate('HomeScreen');
+        } else {
+          navigation.navigate('LoginScreen');
+        }
+      } catch (error) {
+        console.log('Token verify error:', error);
+        navigation.navigate('LoginScreen');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    checkToken();
+  }, []);
 
   const validateForm = () => {
     let errors = {};
@@ -57,24 +78,28 @@ const LoginScreen = ({ navigation }) => {
       setErrorMessageVisible(false);
       const data = {
         email: email,
-        password: password
+        password: password,
       };
-      
-      axios.post('https://linkify-backend-test-94b3648c3afa.herokuapp.com/api/auth/sessions', data)
-          .then(response => {
-            const code = response.data.code;
-            if(code === 200) {
-              storeData(response.data.data.token);
-              getData().then((value) => console.log(value));
-              navigation.navigate('HomeScreen');
-              //save token to local storage
-            } else {
-              Alert.alert('Error', response.data.message);
-            }
-          })
-          .catch(error => {
-            console.error("Error sending data: ", error);
-          });
+
+      axios
+        .post(
+          'https://linkify-backend-test-94b3648c3afa.herokuapp.com/api/auth/sessions',
+          data
+        )
+        .then((response) => {
+          const code = response.data.code;
+          if (code === 200) {
+            storeData(response.data.data.token);
+            getData().then((value) => console.log(value));
+            navigation.navigate('HomeScreen');
+            //save token to local storage
+          } else {
+            Alert.alert('Error', response.data.message);
+          }
+        })
+        .catch((error) => {
+          console.error('Error sending data: ', error);
+        });
     } else {
       setErrorMessageVisible(true);
     }
@@ -86,20 +111,20 @@ const LoginScreen = ({ navigation }) => {
     } catch (e) {
       return null;
     }
-  }
+  };
 
   const getData = async () => {
     try {
-      const value = await AsyncStorage.getItem('token')
-      if(value !== null) {
+      const value = await AsyncStorage.getItem('token');
+      if (value !== null) {
         return value;
-      }else {
+      } else {
         return null;
       }
-    } catch(e) {
+    } catch (e) {
       return null;
     }
-  }
+  };
 
   const handlePress = () => {
     navigation.navigate('RegisterScreen');
@@ -120,11 +145,11 @@ const LoginScreen = ({ navigation }) => {
         style={tw`border-2 border-gray-300 rounded-md h-12 px-4 mb-2`}
         onChangeText={(text) => setEmail(text)}
         value={email}
-        autoCapitalize='none'
+        autoCapitalize="none"
         placeholder="Email"
       />
-      <View  style={[errorMessageVisible ? styles.visible : styles.hidden]}>
-        {Object.values([errorMessages["email"]]).map((errorMessage, index) => (
+      <View style={[errorMessageVisible ? styles.visible : styles.hidden]}>
+        {Object.values([errorMessages['email']]).map((errorMessage, index) => (
           <Text style={tw`text-red-500 text-sm mb-3`} key={index}>
             {errorMessage}
           </Text>
@@ -134,15 +159,17 @@ const LoginScreen = ({ navigation }) => {
         style={tw`border-2 border-gray-300 rounded-md h-12 px-4 mb-2`}
         onChangeText={(text) => setPassword(text)}
         value={password}
-        autoCapitalize='none'
+        autoCapitalize="none"
         placeholder="Password"
       />
-      <View  style={[errorMessageVisible ? styles.visible : styles.hidden]}>
-        {Object.values([errorMessages["password"]]).map((errorMessage, index) => (
-          <Text style={tw`text-red-500 text-sm mb-3`} key={index}>
-            {errorMessage}
-          </Text>
-        ))}
+      <View style={[errorMessageVisible ? styles.visible : styles.hidden]}>
+        {Object.values([errorMessages['password']]).map(
+          (errorMessage, index) => (
+            <Text style={tw`text-red-500 text-sm mb-3`} key={index}>
+              {errorMessage}
+            </Text>
+          )
+        )}
       </View>
       <TouchableOpacity
         style={[
