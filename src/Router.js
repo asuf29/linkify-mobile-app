@@ -3,6 +3,7 @@ import React from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createDrawerNavigator } from '@react-navigation/drawer';
 import { Ionicons } from '@expo/vector-icons';
 import tw from 'twrnc';
 import SplashScreen from './screens/SplashScreen';
@@ -17,6 +18,7 @@ import SharePostScreen from './screens/SharePostScreen';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
+const Drawer = createDrawerNavigator();
 
 const MainTabNavigator = () => {
   return (
@@ -99,6 +101,15 @@ const MainTabNavigator = () => {
     </Tab.Navigator>
   );
 };
+
+const MainDrawerNavigator = () => {
+  return (
+    <Drawer.Navigator>
+      <Drawer.Screen name="Profile" component={ProfileScreen} />
+    </Drawer.Navigator>
+  );
+};
+
 const App = () => {
   return (
     <NavigationContainer>
