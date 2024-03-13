@@ -7,9 +7,12 @@ import {
   Image,
   TouchableOpacity,
   StyleSheet,
+  Alert,
 } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import tw from "twrnc";
+import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const RegisterScreen = ({ navigation }) => {
   const [fullName, setFullname] = useState("");
@@ -102,15 +105,60 @@ const RegisterScreen = ({ navigation }) => {
     }
   };
   const handleRegister = () => {
-    console.log(errorMessageVisible);
     if (isFormValid) {
-      navigation.navigate("HomeScreen");
-      console.log("Form submitted successfully");
       setErrorMessageVisible(false);
+
+      const data = {
+        user: {
+          full_name: fullName,
+          username: username,
+          email: email,
+          password: password,
+        },
+      };
+
+      axios
+        .post(
+          "https://linkify-backend-test-94b3648c3afa.herokuapp.com/api/auth/registers",
+          data
+        )
+        .then((response) => {
+          const code = response.data.code;
+          if (code === 200) {
+            storedata(response.data.data.token);
+            getdata().then((value) => console.log(value));
+            navigation.navigate("HomeScreen");
+            //save token to local storage
+          } else {
+            setRegistrationError(response.data.message);
+          }
+        })
+        .catch((error) => {
+          console.error("Error sending data: ", error);
+        });
     } else {
-      console.log("Form is invalid");
       setErrorMessageVisible(true);
-      console.log(errorMessageVisible);
+    }
+  };
+
+  const storedata = async (value) => {
+    try {
+      await AsyncStorage.setItem("token", value);
+    } catch (e) {
+      return null;
+    }
+  };
+
+  const getdata = async () => {
+    try {
+      const value = await AsyncStorage.getItem("token");
+      if (value !== null) {
+        return value;
+      } else {
+        return null;
+      }
+    } catch (e) {
+      return null;
     }
   };
 
