@@ -1,5 +1,5 @@
-import React from 'react';
-import { Text, View, Image, StyleSheet, Button } from 'react-native';
+import React, {useState, useEffect} from 'react';
+import { Text, View, Image, StyleSheet, Button, Modal, Pressable } from 'react-native';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import Navbar from './../components/Navbar';
 import tw from 'twrnc';
@@ -38,15 +38,45 @@ function Feed() {
   );
 }
 
-
 function LogOut({ navigation }) {
+  const [modalVisible, setModalVisible] = useState(false);
+
+  useEffect(() => {
+    setModalVisible(true);
+  }, []);
+
   return (
     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Text>Log out of your account</Text>
-      <Button
-        title="Go to LoginScreen"
-        onPress={() => navigation.navigate('LoginScreen')}
-      />
+      <Modal
+        animationType='slide'
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => {
+          setModalVisible(!modalVisible);
+        }}
+      > 
+        <View style={tw`flex flex-1 justify-center items-center `}>
+          <View style={tw`m-20 bg-gray-300 rounded-xl p-9 items-center shadow-black`}>
+            <Text style={tw`text-center font-bold text-xs justify-items-center mb-4`}>Log out of your account?</Text>
+            <Pressable
+              style={tw`rounded-md bg-red-500 p-2 w-24 items-center justify-center mb-4`}
+              onPress={() => {
+                navigation.navigate('LoginScreen');
+                setModalVisible(false); 
+              }}>
+              <Text style={tw`items-center font-bold text-white`}>Log Out</Text>
+            </Pressable>
+            <Pressable
+              style={tw`rounded-md bg-gray-500 p-2 w-24 items-center justify-center`}
+              onPress={() => {
+                navigation.navigate('Profile');
+                setModalVisible(false); 
+              }}>
+              <Text style={tw`items-center font-bold text-white`}>Cancel</Text>
+            </Pressable>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -56,8 +86,10 @@ const Drawer = createDrawerNavigator();
 function MyDrawer() {
   return (
     <Drawer.Navigator
-      screenOptions={{drawerPosition:"right"}}
-      // screenOptions={{headerShown: false}}
+      screenOptions={{
+        drawerPosition:"right", 
+        headerShown: false
+      }}
     >
       <Drawer.Screen name="Profile" component={Feed} />
       <Drawer.Screen name="Log Out" component={LogOut} />
@@ -80,6 +112,21 @@ const styles = StyleSheet.create({
   bioContainer: {
     alignItems: 'flex-start',
     justifyContent: 'flex-start',
+  },
+  button: {
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2,
+  },
+  buttonOpen: {
+    backgroundColor: '#F194FF',
+  },
+  buttonClose: {
+    backgroundColor: '#2196F3',
+  },
+  modalText: {
+    marginBottom: 15,
+    textAlign: 'center',
   },
 });
 
