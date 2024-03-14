@@ -13,6 +13,7 @@ import tw from 'twrnc';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+
 const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -27,6 +28,29 @@ const LoginScreen = ({ navigation }) => {
   useEffect(() => {
     validateForm();
   }, [email, password]);
+
+  const verifyToken = async () => {
+    try { 
+
+      const token = await AsyncStorage.getItem('token');
+      if (token !== null) {
+        return true;
+      } else {
+        return false;
+      }
+    } catch (error) {
+      console.log('Error verifying token:', error);
+      return false;
+    }
+  };
+
+  const removeToken = async () => {
+    try {
+      await AsyncStorage.removeItem('token');
+    } catch (error) {
+      console.log('Error removing token:', error);
+    }
+  };
 
   useEffect(() => {
     const checkToken = async () => {
@@ -46,6 +70,15 @@ const LoginScreen = ({ navigation }) => {
       }
     };
     checkToken();
+
+    return async () => {
+      try {
+        await removeToken(); 
+        console.log('Token removed successfully');
+      } catch (error) {
+        console.log('Error removing token:', error);
+      }
+    };
   }, []);
 
   const validateForm = () => {
