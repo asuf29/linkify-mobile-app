@@ -4,6 +4,7 @@ import { createDrawerNavigator } from '@react-navigation/drawer';
 import Navbar from './../components/Navbar';
 import tw from 'twrnc';
 import LoginScreen from './LoginScreen';
+import LogOutModal from '../components/LogOutModal';
 
 function Feed() {
   return (
@@ -39,46 +40,49 @@ function Feed() {
 }
 
 function LogOut({ navigation }) {
-  const [modalVisible, setModalVisible] = useState(false);
-
-  useEffect(() => {
-    setModalVisible(true);
-  }, []);
-
-  return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-      <Modal
-        animationType='slide'
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => {
-          setModalVisible(!modalVisible);
-        }}
-      > 
-        <View style={tw`flex flex-1 justify-center items-center `}>
-          <View style={tw`m-20 bg-gray-300 rounded-xl p-9 items-center shadow-black`}>
-            <Text style={tw`text-center font-bold text-xs justify-items-center mb-4`}>Log out of your account?</Text>
-            <Pressable
-              style={tw`rounded-md bg-red-500 p-2 w-24 items-center justify-center mb-4`}
-              onPress={() => {
-                navigation.navigate('LoginScreen');
-                setModalVisible(false); 
-              }}>
-              <Text style={tw`items-center font-bold text-white`}>Log Out</Text>
-            </Pressable>
-            <Pressable
-              style={tw`rounded-md bg-gray-500 p-2 w-24 items-center justify-center`}
-              onPress={() => {
-                navigation.navigate('Profile');
-                setModalVisible(false); 
-              }}>
-              <Text style={tw`items-center font-bold text-white`}>Cancel</Text>
-            </Pressable>
-          </View>
-        </View>
-      </Modal>
+  return(
+    <View>
+      <LogOutModal navigation={navigation} />
     </View>
-  );
+  )
+  // useEffect(() => {
+  //   setModalVisible(true);
+  // }, []);
+
+  // return (
+  //   <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+  //     <Modal
+  //       animationType='slide'
+  //       transparent={true}
+  //       visible={modalVisible}
+  //       onRequestClose={() => {
+  //         setModalVisible(!modalVisible);
+  //       }}
+  //     > 
+  //       <View style={tw`flex flex-1 justify-center items-center `}>
+  //         <View style={tw`m-20 bg-gray-300 rounded-xl p-9 items-center shadow-black`}>
+  //           <Text style={tw`text-center font-bold text-xs justify-items-center mb-4`}>Log out of your account?</Text>
+  //           <Pressable
+  //             style={tw`rounded-md bg-red-500 p-2 w-24 items-center justify-center mb-4`}
+  //             onPress={() => {
+  //               navigation.navigate('LoginScreen');
+  //               setModalVisible(false); 
+  //             }}>
+  //             <Text style={tw`items-center font-bold text-white`}>Log Out</Text>
+  //           </Pressable>
+  //           <Pressable
+  //             style={tw`rounded-md bg-gray-500 p-2 w-24 items-center justify-center`}
+  //             onPress={() => {
+  //               navigation.navigate('Profile');
+  //               setModalVisible(false); 
+  //             }}>
+  //             <Text style={tw`items-center font-bold text-white`}>Cancel</Text>
+  //           </Pressable>
+  //         </View>
+  //       </View>
+  //     </Modal>
+  //   </View>
+  // );
 }
 
 const Drawer = createDrawerNavigator();
@@ -98,7 +102,7 @@ function MyDrawer() {
 }
 
 function ProfileScreen() {
-  return (
+  return (  
     <MyDrawer />
   );
 }
