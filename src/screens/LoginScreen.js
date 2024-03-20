@@ -23,63 +23,10 @@ const LoginScreen = ({ navigation }) => {
   });
   const [errorMessageVisible, setErrorMessageVisible] = useState(false);
   const [isFormValid, setIsFormValid] = useState(false);
-  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     validateForm();
   }, [email, password]);
-
-  const verifyToken = async () => {
-    try { 
-
-      const token = await AsyncStorage.getItem('token');
-      if (token !== null) {
-        return true;
-      } else {
-        return false;
-      }
-    } catch (error) {
-      console.log('Error verifying token:', error);
-      return false;
-    }
-  };
-
-  const removeToken = async () => {
-    try {
-      await AsyncStorage.removeItem('token');
-    } catch (error) {
-      console.log('Error removing token:', error);
-    }
-  };
-
-  useEffect(() => {
-    const checkToken = async () => {
-      try {
-        const isValid = await verifyToken();
-
-        if (isValid) {
-          navigation.navigate('HomeScreen');
-        } else {
-          navigation.navigate('LoginScreen');
-        }
-      } catch (error) {
-        console.log('Token verify error:', error);
-        navigation.navigate('LoginScreen');
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    checkToken();
-
-    return async () => {
-      try {
-        await removeToken(); 
-        console.log('Token removed successfully');
-      } catch (error) {
-        console.log('Error removing token:', error);
-      }
-    };
-  }, []);
 
   const validateForm = () => {
     let errors = {};
