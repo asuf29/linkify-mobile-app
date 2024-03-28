@@ -10,7 +10,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 function Feed() {
   const [userData, setUserData] = useState(null);
-  const [avatarUrl, setAvatarUrl] = useState('');
 
   useEffect(() => {
     const handleUserDatas = async () => {
