@@ -5,32 +5,73 @@ import Navbar from './../components/Navbar';
 import tw from 'twrnc';
 import LoginScreen from './LoginScreen';
 import LogOutModal from '../components/LogOutModal';
+import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 function Feed() {
+  const [userData, setUserData] = useState(null);
+  const [avatarUrl, setAvatarUrl] = useState('');
+
+  useEffect(() => {
+    const handleUserDatas = async () => {
+      try {
+        const token = await AsyncStorage.getItem('token');
+        const response = await axios.get('https://linkify-backend-test-94b3648c3afa.herokuapp.com/api/profiles/current', {
+          headers: { 
+            'Authorization': `${token}`
+           }
+        });
+        const { data, code } = response.data;
+        if (code === 200) {
+          console.log(data)
+          setUserData(data);
+        } else {
+          console.log(data);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    handleUserDatas();
+  }, []);
+  
   return (
     <View style={styles.container}>
       <Navbar />
+      {userData ? (
+        <View style={styles.bioContainer}>
+          <Text style={tw`text-start text-lg font-bold`}>{userData.user.personal_info.username}</Text>
+       </View>
+      ) : null}
       <View style={tw`flex-row items-center mb-20`}>
         <View>
-          <Image
-            source={require('./../assets/images/asuf.jpg')}
-            style={tw`w-24 h-24  rounded-full`}
-          />
+           {userData ? (
+           <Image
+             source={{uri: userData.user.personal_info.avatar}}
+             style={tw`w-24 h-24  rounded-full`}
+           />
+        ) : null}
         </View>
         <View style={tw`flex-row mx-8`}>
+        {userData ? (
           <View style={tw`items-center mr-10`}>
-            <Text style={tw`text-lg font-bold`}>129</Text>
+            <Text style={tw`text-lg font-bold`}>{userData.user.followers}</Text>
             <Text style={tw`text-sm font-medium`}>followers</Text>
           </View>
+        ) : null}
+        {userData ? (
           <View style={tw`items-center`}>
-            <Text style={tw`text-lg font-bold`}>129</Text>
+            <Text style={tw`text-lg font-bold`}>{userData.user.followings}</Text>
             <Text style={tw`text-sm font-medium`}>following</Text>
           </View>
-        </View>
+        ) : null}
       </View>
-      <View style={styles.bioContainer}>
-        <Text>Asuf</Text>
       </View>
+      {userData ? (
+         <View style={styles.bioContainer}>
+          <Text style={tw`text-lg font-bold`}>{userData.user.personal_info.full_name}</Text>
+       </View>
+      ) : null}
       <View style={tw`flex-row`}>
         <Button title="Edit Profile" onPress={() => {}} />
         <Button title="Share profile" onPress={() => {}} />
@@ -38,51 +79,13 @@ function Feed() {
     </View>
   );
 }
-
+ 
 function LogOut({ navigation }) {
   return(
     <View>
       <LogOutModal navigation={navigation} />
     </View>
   )
-  // useEffect(() => {
-  //   setModalVisible(true);
-  // }, []);
-
-  // return (
-  //   <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-  //     <Modal
-  //       animationType='slide'
-  //       transparent={true}
-  //       visible={modalVisible}
-  //       onRequestClose={() => {
-  //         setModalVisible(!modalVisible);
-  //       }}
-  //     > 
-  //       <View style={tw`flex flex-1 justify-center items-center `}>
-  //         <View style={tw`m-20 bg-gray-300 rounded-xl p-9 items-center shadow-black`}>
-  //           <Text style={tw`text-center font-bold text-xs justify-items-center mb-4`}>Log out of your account?</Text>
-  //           <Pressable
-  //             style={tw`rounded-md bg-red-500 p-2 w-24 items-center justify-center mb-4`}
-  //             onPress={() => {
-  //               navigation.navigate('LoginScreen');
-  //               setModalVisible(false); 
-  //             }}>
-  //             <Text style={tw`items-center font-bold text-white`}>Log Out</Text>
-  //           </Pressable>
-  //           <Pressable
-  //             style={tw`rounded-md bg-gray-500 p-2 w-24 items-center justify-center`}
-  //             onPress={() => {
-  //               navigation.navigate('Profile');
-  //               setModalVisible(false); 
-  //             }}>
-  //             <Text style={tw`items-center font-bold text-white`}>Cancel</Text>
-  //           </Pressable>
-  //         </View>
-  //       </View>
-  //     </Modal>
-  //   </View>
-  // );
 }
 
 const Drawer = createDrawerNavigator();
@@ -115,22 +118,6 @@ const styles = StyleSheet.create({
   },
   bioContainer: {
     alignItems: 'flex-start',
-    justifyContent: 'flex-start',
-  },
-  button: {
-    borderRadius: 20,
-    padding: 10,
-    elevation: 2,
-  },
-  buttonOpen: {
-    backgroundColor: '#F194FF',
-  },
-  buttonClose: {
-    backgroundColor: '#2196F3',
-  },
-  modalText: {
-    marginBottom: 15,
-    textAlign: 'center',
   },
 });
 
