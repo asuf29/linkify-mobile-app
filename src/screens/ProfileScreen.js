@@ -5,6 +5,7 @@ import Navbar from './../components/Navbar';
 import tw from 'twrnc';
 import LoginScreen from './LoginScreen';
 import LogOutModal from '../components/LogOutModal';
+import CustomDrawerContent from '../components/CustomDrawerContent';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -37,6 +38,7 @@ function Feed() {
   return (
     <View style={styles.container}>
       <Navbar />
+      <CustomDrawerContent />
       {userData ? (
         <View style={styles.bioContainer}>
           <Text style={tw`text-start text-lg font-bold`}>{userData.user.personal_info.username}</Text>
@@ -76,6 +78,7 @@ function Feed() {
         <Button title="Share profile" onPress={() => {}} />
       </View>
     </View>
+   
   );
 }
  
