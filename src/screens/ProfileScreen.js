@@ -4,13 +4,14 @@ import { createDrawerNavigator } from '@react-navigation/drawer';
 import Navbar from './../components/Navbar';
 import tw from 'twrnc';
 import LoginScreen from './LoginScreen';
+import EditProfileScreen from './EditProfileScreen';
 import LogOutModal from '../components/LogOutModal';
 import CustomDrawerContent from '../components/CustomDrawerContent';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { StatusBar } from 'expo-status-bar';
 
-function Feed() {
+function Feed({ navigation }) {
   const [userData, setUserData] = useState(null);
 
   useEffect(() => {
@@ -36,6 +37,10 @@ function Feed() {
     handleUserDatas();
   }, []);
   
+  const handleEditProfile = () => {
+    navigation.navigate('EditProfileScreen');
+  };
+
   return (
     <View style={styles.container}>
       <Navbar />
@@ -101,7 +106,7 @@ function Feed() {
       <View style={tw`flex flex-row`}>
         <TouchableOpacity 
           style={[tw`bg-gray-900 mr-10 rounded-md p-2`, styles.button]}
-          onPress={() => {}}
+          onPress={handleEditProfile}
         >
           <Text style={[tw`text-white text-sm text-center`]}>Edit Profile</Text>
         </TouchableOpacity>

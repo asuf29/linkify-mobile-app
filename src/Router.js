@@ -15,6 +15,7 @@ import ProfileScreen from './screens/ProfileScreen';
 import DiscoverScreen from './screens/DiscoverScreen';
 import FavoriteScreen from './screens/FavoriteScreen';
 import SharePostScreen from './screens/SharePostScreen';
+import EditProfileScreen from './screens/EditProfileScreen';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -129,6 +130,8 @@ const App = () => {
         <Stack.Screen name="HomeScreen">
           {() => <MainTabNavigator />}
         </Stack.Screen>
+        <Stack.Screen name="ProfileScreen" component={EditProfileScreen} />
+        <Stack.Screen name="EditProfileScreen" component={EditProfileScreen} />
         <Stack.Screen name="RegisterScreen" component={RegisterScreen} />
       </Stack.Navigator>
     </NavigationContainer>
