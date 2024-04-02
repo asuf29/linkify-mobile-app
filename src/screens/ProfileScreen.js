@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react';
-import { Text, View, Image, StyleSheet, Button, Modal, Pressable } from 'react-native';
+import { Text, View, Image, StyleSheet, Button, TouchableOpacity} from 'react-native';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import Navbar from './../components/Navbar';
 import tw from 'twrnc';
@@ -8,6 +8,7 @@ import LogOutModal from '../components/LogOutModal';
 import CustomDrawerContent from '../components/CustomDrawerContent';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { StatusBar } from 'expo-status-bar';
 
 function Feed() {
   const [userData, setUserData] = useState(null);
@@ -38,18 +39,23 @@ function Feed() {
   return (
     <View style={styles.container}>
       <Navbar />
-      <CustomDrawerContent />
-      {userData ? (
-        <View style={styles.bioContainer}>
-          <Text style={tw`text-start text-lg font-bold`}>{userData.user.personal_info.username}</Text>
-       </View>
-      ) : null}
-      <View style={tw`flex-row items-center mb-20`}>
+        <View style={styles.mainBioContainer}>
+        <StatusBar style="auto" />
+        {userData ? (
+          <View>
+            <Text style={tw`text-start text-xl font-bold ml-4`}>{userData.user.personal_info.username}</Text>
+          </View>
+        ) : null}
+        <View style={styles.hamburgerMenu}>
+          <CustomDrawerContent />
+        </View>
+      </View>
+      <View style={tw`flex-row items-center mb-2`}>
         <View>
            {userData ? (
            <Image
              source={{uri: userData.user.personal_info.avatar}}
-             style={tw`w-24 h-24  rounded-full`}
+             style={tw`w-24 h-24 mr-8 rounded-full`}
            />
         ) : null}
         </View>
@@ -68,17 +74,46 @@ function Feed() {
         ) : null}
       </View>
       </View>
-      {userData ? (
-         <View style={styles.bioContainer}>
-          <Text style={tw`text-lg font-bold`}>{userData.user.personal_info.full_name}</Text>
-       </View>
-      ) : null}
-      <View style={tw`flex-row`}>
-        <Button title="Edit Profile" onPress={() => {}} />
-        <Button title="Share profile" onPress={() => {}} />
+      <View style={styles.bioContainer}>
+        {userData ? (
+        <View>
+            <Text style={styles.bioContainerText}>{userData.user.personal_info.full_name}</Text>
+        </View>
+        ) : null}
       </View>
+      {/* <View style={tw`flex flex-row`}>
+        <View style={[tw`bg-gray-900 mr-10 rounded-md text-sm`, styles.button]}>
+          <Button 
+            title="Edit Profile"
+            color={'#fff'}
+            onPress={() => {}} 
+          />
+        </View>
+        <View style={[tw`bg-gray-900 mr-10 rounded-md`, styles.button]}>
+          <Button 
+            title="Share profile" 
+            color={'#fff'}
+            onPress={() => {}} 
+          />
+        </View>
+      </View> */}
+      
+      <View style={tw`flex flex-row`}>
+        <TouchableOpacity 
+          style={[tw`bg-gray-900 mr-10 rounded-md p-2`, styles.button]}
+          onPress={() => {}}
+        >
+          <Text style={[tw`text-white text-sm text-center`]}>Edit Profile</Text>
+        </TouchableOpacity>
+        <TouchableOpacity 
+          style={[tw`bg-gray-900 mr-10 rounded-md p-2`, styles.button]}
+          onPress={() => {}}
+        >
+          <Text style={[tw`text-white text-sm text-center`]}>Share Profile</Text>
+        </TouchableOpacity>
+      </View>
+
     </View>
-   
   );
 }
  
@@ -116,10 +151,30 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'center',
-    justifyContent: 'center',
+    paddingTop: 70,
+    position: 'absolute',
+  },
+  mainBioContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+    padding: 10,
   },
   bioContainer: {
-    alignItems: 'flex-start',
+    width: '100%',
+    padding: 10,
+    marginBottom: 20,
+  },
+  bioContainerText: {
+    fontSize: 16,
+    fontWeight: '600',
+    marginLeft: 10,
+  },
+  button: {
+    width: 150,
+    alignItems: 'center',
+    marginLeft: 10,
+    marginRight: 10,
   },
 });
 
