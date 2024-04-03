@@ -4,6 +4,9 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import tw from 'twrnc';
 import { StatusBar } from 'expo-status-bar';
+import Toast from 'react-native-toast-message';
+import ProfileScreen from './ProfileScreen';
+import { useNavigation } from '@react-navigation/native';
 
 
 const EditProfileScreen = () => {
@@ -11,6 +14,7 @@ const EditProfileScreen = () => {
   const [fullName, setFullName] = useState('');
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
+  const navigation = useNavigation();
 
   useEffect(() => {
     const handleUserDatas = async () => {
@@ -35,6 +39,27 @@ const EditProfileScreen = () => {
     handleUserDatas();
   }, []);
 
+  const updateProfile = async () => {
+    try {
+      const currentUsername = await AsyncStorage.getItem('username');
+      const currentFullName = await AsyncStorage.getItem('fullName');
+      const currentEmail = await AsyncStorage.getItem('email');
+      console.log('aa');
+
+      if (currentUsername !== username) {
+        await AsyncStorage.setItem('username', username);
+      }
+      if (currentFullName !== fullName) {
+        await AsyncStorage.setItem('fullName', fullName);
+      }
+      if (currentEmail !== email) {
+        await AsyncStorage.setItem('email', email);
+      }
+    } catch (error) {
+      console.log('Profil bilgileri güncellenirken bir hata oluştu:', error);
+    }
+  };
+
   const handleSaveProfile = async () => {
     try {
       const token = await AsyncStorage.getItem('token');
@@ -49,14 +74,38 @@ const EditProfileScreen = () => {
       });
       const { data, code } = response.data;
       if (code === 200) {
-        Alert.alert('Success', 'Profile Updated');
+        Alert.alert(
+          'Success',
+          'Profile Updated', 
+          [
+            {
+              text: 'OK',
+              onPress: () => {
+                navigation.navigate('ProfileScreen')
+                updateProfile();
+              }
+            }
+          ]
+      );
       } else {
-        Alert.alert('Error', ' Error Updated Profile');
+        Alert.alert('Error', 'Profile could not be updated');
       }
     } catch (error) {
       console.log(error);
     };
   };
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      console.log('Screen is focused');
+      Toast.show({
+        type: 'success',
+        text1: 'Profile Updated',
+      });
+    });
+
+    return unsubscribe;
+  }, [navigation]);
   
   return (
     <View style={styles.container}>
