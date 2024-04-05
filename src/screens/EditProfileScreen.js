@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, Alert } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Image, Alert, RefreshControl, ScrollView } from 'react-native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import tw from 'twrnc';
@@ -15,6 +15,14 @@ const EditProfileScreen = () => {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const navigation = useNavigation();
+  const [refreshing, setRefreshing] = React.useState(false);
+
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 2000);
+  }, []);
 
   useEffect(() => {
     const handleUserDatas = async () => {
@@ -108,7 +116,12 @@ const EditProfileScreen = () => {
   }, [navigation]);
   
   return (
-    <View style={styles.container}>
+    <ScrollView
+        contentContainerStyle={styles.scrollView}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }>
+      <View style={styles.container}>
       <StatusBar style="auto" />
       <Text style={tw`text-2xl font-bold`}>Edit Profile</Text>
       <View>
@@ -144,7 +157,9 @@ const EditProfileScreen = () => {
       >
         <Text style={[tw`text-gray-100 text-center`, styles.button]}>Save</Text>
       </TouchableOpacity>
-    </View>
+      </View>
+    </ScrollView>
+    
   );
 };
 
@@ -169,6 +184,9 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     paddingHorizontal: 10,
     marginBottom: 20,
+  },
+  scrollView: {
+    flexGrow: 1,
   },
 });
 
