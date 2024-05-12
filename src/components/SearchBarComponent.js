@@ -1,8 +1,7 @@
 import React, { useState } from 'react';
 import { View, TextInput, Button, StyleSheet } from 'react-native';
-import { SearchBar } from 'react-native-screens';
 
-const SearchBar = ({ onSearch }) => {
+const SearchBarComponent = ({ onSearch }) => {
   const [searchQuery, setSearchQuery] = useState('');
 
   const handleSearch = () => {
@@ -37,4 +36,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default SearchBar;
+export default SearchBarComponent;

@@ -1,10 +1,13 @@
 import React from 'react';
-import { Text, View, StyleSheet } from 'react-native';
+import { Text, View, StyleSheet, Button } from 'react-native';
 import Navbar from './../components/Navbar';
 import { RefreshControl, ScrollView } from 'react-native-gesture-handler';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useNavigation } from '@react-navigation/native';
+import UserSearchBar from './UserSearchBar';
 
 function DiscoverScreen() {
+  const navigation = useNavigation();
   const [refreshing, setRefreshing] = React.useState(false);
 
   const onRefresh = React.useCallback(() => {
@@ -13,6 +16,11 @@ function DiscoverScreen() {
       setRefreshing(false);
     }, 2000);
   }, []);
+
+  const goToSearch = ({ navigation }) => {
+    navigation.navigate('UserSearchBar');
+    console.log("whyy")
+  };
   
   return (
     <SafeAreaView style={styles.container}>
@@ -23,6 +31,12 @@ function DiscoverScreen() {
         }>
         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
         <Navbar />
+        <View style={styles.searchBar}> 
+          <Button 
+            title="Go to Search" 
+            onPress={() => navigation.navigate('UserSearchBar')}
+          />
+        </View>
         <Text>Discover Screen</Text>
         </View>
       </ScrollView>
@@ -38,6 +52,9 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  searchBar: {
+    marginBottom: 20,
   },
 });
 

@@ -16,6 +16,7 @@ import DiscoverScreen from './screens/DiscoverScreen';
 import FavoriteScreen from './screens/FavoriteScreen';
 import SharePostScreen from './screens/SharePostScreen';
 import EditProfileScreen from './screens/EditProfileScreen';
+import UserSearchBar from './screens/UserSearchBar';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -133,6 +134,7 @@ const App = () => {
         <Stack.Screen name="ProfileScreen" component={EditProfileScreen} />
         <Stack.Screen name="EditProfileScreen" component={EditProfileScreen} />
         <Stack.Screen name="RegisterScreen" component={RegisterScreen} />
+        <Stack.Screen name="UserSearchBar" component={UserSearchBar} />
       </Stack.Navigator>
     </NavigationContainer>
   );
