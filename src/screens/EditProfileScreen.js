@@ -37,6 +37,9 @@ const EditProfileScreen = () => {
         if (code === 200) {
           console.log(data)
           setUserData(data);
+          setFullName(data.user.personal_info.full_name);
+          setUsername(data.user.personal_info.username);
+          setEmail(data.user.personal_info.email);
         } else {
           console.log(data);
         }
@@ -46,27 +49,6 @@ const EditProfileScreen = () => {
     };
     handleUserDatas();
   }, []);
-
-  const updateProfile = async () => {
-    try {
-      const currentUsername = await AsyncStorage.getItem('username');
-      const currentFullName = await AsyncStorage.getItem('fullName');
-      const currentEmail = await AsyncStorage.getItem('email');
-      console.log('aa');
-
-      if (currentUsername !== username) {
-        await AsyncStorage.setItem('username', username);
-      }
-      if (currentFullName !== fullName) {
-        await AsyncStorage.setItem('fullName', fullName);
-      }
-      if (currentEmail !== email) {
-        await AsyncStorage.setItem('email', email);
-      }
-    } catch (error) {
-      console.log('Profil bilgileri güncellenirken bir hata oluştu:', error);
-    }
-  };
 
   const handleSaveProfile = async () => {
     try {
@@ -82,19 +64,7 @@ const EditProfileScreen = () => {
       });
       const { data, code } = response.data;
       if (code === 200) {
-        Alert.alert(
-          'Success',
-          'Profile Updated', 
-          [
-            {
-              text: 'OK',
-              onPress: () => {
-                navigation.navigate('ProfileScreen')
-                updateProfile();
-              }
-            }
-          ]
-      );
+        navigation.navigate('tab5', { screen: 'ProfileScreen' });
       } else {
         Alert.alert('Error', 'Profile could not be updated');
       }
@@ -102,18 +72,6 @@ const EditProfileScreen = () => {
       console.log(error);
     };
   };
-
-  useEffect(() => {
-    const unsubscribe = navigation.addListener('focus', () => {
-      console.log('Screen is focused');
-      Toast.show({
-        type: 'success',
-        text1: 'Profile Updated',
-      });
-    });
-
-    return unsubscribe;
-  }, [navigation]);
   
   return (
     <ScrollView

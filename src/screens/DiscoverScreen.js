@@ -19,7 +19,6 @@ function DiscoverScreen() {
 
   const goToSearch = ({ navigation }) => {
     navigation.navigate('UserSearchBar');
-    console.log("whyy")
   };
   
   return (

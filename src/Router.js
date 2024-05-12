@@ -131,7 +131,7 @@ const App = () => {
         <Stack.Screen name="HomeScreen">
           {() => <MainTabNavigator />}
         </Stack.Screen>
-        <Stack.Screen name="ProfileScreen" component={EditProfileScreen} />
+        <Stack.Screen name="ProfileScreen" component={ProfileScreen} />
         <Stack.Screen name="EditProfileScreen" component={EditProfileScreen} />
         <Stack.Screen name="RegisterScreen" component={RegisterScreen} />
         <Stack.Screen name="UserSearchBar" component={UserSearchBar} />
