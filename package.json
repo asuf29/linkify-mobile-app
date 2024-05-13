@@ -18,7 +18,7 @@
     "@react-navigation/stack": "^6.3.21",
     "axios": "^1.6.7",
     "deprecated-react-native-prop-types": "^5.0.0",
-    "expo": "~50.0.6",
+    "expo": "^50.0.18",
     "expo-splash-screen": "~0.26.4",
     "expo-status-bar": "~1.11.1",
     "expo-storage": "^48.1.0",

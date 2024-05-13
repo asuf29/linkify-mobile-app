@@ -16,10 +16,6 @@ function DiscoverScreen() {
       setRefreshing(false);
     }, 2000);
   }, []);
-
-  const goToSearch = ({ navigation }) => {
-    navigation.navigate('UserSearchBar');
-  };
   
   return (
     <SafeAreaView style={styles.container}>
@@ -29,14 +25,14 @@ function DiscoverScreen() {
           <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
         }>
         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-        <Navbar />
-        <View style={styles.searchBar}> 
-          <Button 
-            title="Go to Search" 
-            onPress={() => navigation.navigate('UserSearchBar')}
-          />
-        </View>
-        <Text>Discover Screen</Text>
+          <Navbar />
+          <View style={styles.searchBar}> 
+            <Button 
+              title="Go to Search" 
+              onPress={() => navigation.navigate('UserSearchBar')}
+            />
+          </View>
+          <Text>Discover Screen</Text>
         </View>
       </ScrollView>
     </SafeAreaView>

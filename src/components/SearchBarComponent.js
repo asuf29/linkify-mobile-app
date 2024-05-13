@@ -14,6 +14,8 @@ const SearchBarComponent = ({ onSearch }) => {
         style={styles.input}
         placeholder="Search users..."
         value={searchQuery}
+        autoCapitalize="none"
+        autoFocus={true}
         onChangeText={text => setSearchQuery(text)}
       />
       <Button title="Search" onPress={handleSearch} />
@@ -26,13 +28,15 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 10,
+    paddingTop: 40,
   },
   input: {
     flex: 1,
-    height: 40,
+    height: 30,
     borderColor: 'gray',
     borderWidth: 1,
     marginRight: 10,
+    borderRadius: 10,
   },
 });
 
