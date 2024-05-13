@@ -95,18 +95,21 @@ const EditProfileScreen = () => {
         style={styles.input}
         placeholder="Full Name"
         value={fullName}
+        autoCapitalize="none"
         onChangeText={text => setFullName(text)}
       />
       <TextInput
         style={styles.input}
         placeholder="Username"
         value={username}
+        autoCapitalize="none"
         onChangeText={text => setUsername(text)}
       />
       <TextInput
         style={styles.input}
         placeholder="Email"
         value={email}
+        autoCapitalize="none"
         onChangeText={text => setEmail(text)}
       />
       <TouchableOpacity
