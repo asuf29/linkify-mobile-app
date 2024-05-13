@@ -4,6 +4,7 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import SearchBarComponent from './../components/SearchBarComponent'; 
 import tw from 'twrnc';
+import { Ionicons } from '@expo/vector-icons';
 
 const API_BASE_URL = 'https://linkify-backend-test-94b3648c3afa.herokuapp.com/api';
 
@@ -70,10 +71,15 @@ const UserSearchBar = () => {
             <View style={styles.userContainer}>
               <Image
                 source={{uri: item.avatar}}
-                style={tw`w-24 h-24 mr-8 rounded-full`}
+                style={tw`w-10 h-10 mr-4 rounded-full`}
               />
-              <Text>{item.username}</Text>
-              <Text>{item.full_name}</Text>
+              <View>
+                <Text style={tw`text-sm font-bold`}>{item.username}</Text>
+                <Text style={tw`text-gray-700`}>{item.full_name}</Text>
+              </View>
+              {/* <View style={tw`flex-1 items-end`}>
+                <Ionicons name="close" size={20} style={tw`text-gray-500`}/>
+              </View> */}
             </View>
           )}
           />
@@ -90,6 +96,7 @@ const styles = StyleSheet.create({
   },
   userContainer: {
     marginTop: 10,
+    flexDirection: 'row',
   },
 });
 
