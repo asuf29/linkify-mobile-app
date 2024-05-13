@@ -10,6 +10,7 @@ import {
   StyleSheet,
 } from "react-native";
 import Navbar from "./../components/Navbar";
+import ProductPicker from "../components/ProductPickerModal";
 import { SafeAreaView } from "react-native-safe-area-context";
 import Carousel from "react-native-snap-carousel";
 import Icon from "react-native-vector-icons/FontAwesome";
@@ -49,6 +50,21 @@ const profileData = [
 
 const HomeScreen = () => {
   const [iconColor, setIconColor] = useState({});
+
+  const [carouselData, setCarouselData] = useState([]);
+  const [selectedItemId, setSelectedItemId] = useState(null); // Seçilen öğenin ID'sini tutan state'i oluştur
+
+  const [isModalVisible, setModalVisible] = useState(false);
+
+  const openModal = (itemId) => {
+    setSelectedItemId(itemId);
+    setModalVisible(true);
+  };
+
+  const onModalClose = () => {
+    setModalVisible(false);
+  };
+
   const imageWidth = windowDimensions.width;
   const imageHeight = imageWidth;
 
@@ -64,25 +80,28 @@ const HomeScreen = () => {
       initialIconColors[data.id] = "black";
     });
     setIconColor(initialIconColors);
+
+    // carouselData'ya veri ataması
+    setCarouselData([
+      { id: "1", image: require("../assets/home-screen/bag.jpg") },
+      { id: "2", image: require("../assets/home-screen/belt.jpg") },
+      { id: "3", image: require("../assets/home-screen/blazer.jpg") },
+      { id: "4", image: require("../assets/home-screen/earring.jpg") },
+      { id: "5", image: require("../assets/home-screen/skirt.jpg") },
+    ]);
   }, []);
-
-  const carouselData = [
-    { id: "1", image: require("../assets/home-screen/bag.jpg") },
-    { id: "2", image: require("../assets/home-screen/belt.jpg") },
-    { id: "3", image: require("../assets/home-screen/blazer.jpg") },
-    { id: "4", image: require("../assets/home-screen/earring.jpg") },
-    { id: "5", image: require("../assets/home-screen/skirt.jpg") },
-  ];
-
   const renderCarouselItem = ({ item }) => (
-    <View style={{ width: imageSize, height: imageSize }}>
-      <Image
-        style={tw`flex-1  w-full h-full aspect-ratio: 1 rounded-lg`}
-        resizeMode="contain"
-        source={item.image}
-      />
-    </View>
+    <TouchableOpacity onPress={() => openModal(item.id)}>
+      <View style={{ width: imageSize, height: imageSize }}>
+        <Image
+          style={tw`flex-1  w-full h-full aspect-ratio: 1 rounded-lg`}
+          resizeMode="contain"
+          source={item.image}
+        />
+      </View>
+    </TouchableOpacity>
   );
+
   const renderItem = ({ item }) => (
     <ScrollView>
       <View key={item.id}>
@@ -120,6 +139,12 @@ const HomeScreen = () => {
             sliderWidth={windowDimensions.width}
             itemWidth={imageSize}
             renderItem={renderCarouselItem}
+          />
+          <ProductPicker
+            isVisible={isModalVisible}
+            onClose={onModalClose}
+            selectedItemId={selectedItemId}
+            carouselData={carouselData}
           />
         </View>
       </View>
