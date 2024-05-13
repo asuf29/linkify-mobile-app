@@ -1,17 +1,20 @@
 import React, { useState, useEffect } from 'react';
-import { View, FlatList, ActivityIndicator, StyleSheet, Text, Image } from 'react-native';
+import { View, FlatList, ActivityIndicator, StyleSheet, Text, Image, TouchableOpacity } from 'react-native';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import SearchBarComponent from './../components/SearchBarComponent'; 
 import tw from 'twrnc';
 import { Ionicons } from '@expo/vector-icons';
+import OtherProfileScreen from './OtherProfileScreen';
+import { useNavigation } from '@react-navigation/native';
 
 const API_BASE_URL = 'https://linkify-backend-test-94b3648c3afa.herokuapp.com/api';
 
 const UserSearchBar = () => {
   const [loading, setLoading] = useState(false);
   const [users, setUsers] = useState([]);
-
+  const navigation = useNavigation();
+  
   useEffect(() => {
     const fetchUsers = async () => {
       try {
@@ -74,8 +77,10 @@ const UserSearchBar = () => {
                 style={tw`w-10 h-10 mr-4 rounded-full`}
               />
               <View>
-                <Text style={tw`text-sm font-bold`}>{item.username}</Text>
-                <Text style={tw`text-gray-700`}>{item.full_name}</Text>
+                <TouchableOpacity onPress={() => navigation.navigate('OtherProfileScreen', { username: item.username })}>
+                  <Text style={tw`text-sm font-bold`}>{item.username}</Text>
+                  <Text style={tw`text-gray-700`}>{item.full_name}</Text>
+                </TouchableOpacity>
               </View>
               {/* <View style={tw`flex-1 items-end`}>
                 <Ionicons name="close" size={20} style={tw`text-gray-500`}/>
