@@ -63,7 +63,7 @@ const UserSearchBar = () => {
       <SearchBarComponent onSearch={handleSearch} />
       {loading ? (
         <View>
-          <ActivityIndicator style={{ marginTop: 20 }} size="large" color="#0000ff" />
+          <ActivityIndicator style={{ marginTop: 20 }} size="large" color="#000" />
         </View>
       ) : (
         <View>

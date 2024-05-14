@@ -151,7 +151,7 @@ const styles = StyleSheet.create({
   },
   followButtonContainer: {
     width: '100%',
-    height: 30,
+    height: 50,
   },
   followButton: {
     backgroundColor: 'black',
@@ -162,7 +162,7 @@ const styles = StyleSheet.create({
   followButtonText: {
     color: 'white',
     textAlign: 'center',
-    fontSize: 15,
+    fontSize: 16,
   },
 });
 
