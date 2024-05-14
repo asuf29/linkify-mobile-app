@@ -4,8 +4,7 @@ import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import tw from 'twrnc';
 import { StatusBar } from 'expo-status-bar';
-import Toast from 'react-native-toast-message';
-import ProfileScreen from './ProfileScreen';
+import HomeScreen from './HomeScreen';
 import { useNavigation } from '@react-navigation/native';
 
 
@@ -64,7 +63,7 @@ const EditProfileScreen = () => {
       });
       const { data, code } = response.data;
       if (code === 200) {
-        navigation.navigate('tab5', { screen: 'ProfileScreen' });
+        navigation.navigate('tab1', { screen: 'HomeScreen' });
       } else {
         Alert.alert('Error', 'Profile could not be updated');
       }
