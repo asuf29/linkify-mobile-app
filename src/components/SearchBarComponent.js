@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, TextInput, Button, StyleSheet, TouchableOpacity, Text } from 'react-native';
+import { View, TextInput, StyleSheet, TouchableOpacity, Text } from 'react-native';
 
 const SearchBarComponent = ({ onSearch }) => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -9,17 +9,6 @@ const SearchBarComponent = ({ onSearch }) => {
   };
 
   return (
-    // <View style={styles.container}>
-    //   <TextInput
-    //     style={styles.input}
-    //     placeholder="Search users..."
-    //     value={searchQuery}
-    //     autoCapitalize="none"
-    //     autoFocus={true}
-    //     onChangeText={text => setSearchQuery(text)}
-    //   />
-    //   <Button title="Search" onPress={handleSearch} />
-    // </View>
     <View style={styles.container}>
       <TextInput
         style={styles.input}
@@ -41,7 +30,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 10,
-    marginTop: 40,
+    marginTop: 50,
     borderBlockColor: 'black',
     borderWidth: 1,
     borderRadius: 10,

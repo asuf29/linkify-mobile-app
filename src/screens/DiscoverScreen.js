@@ -28,8 +28,8 @@ function DiscoverScreen() {
         <View style={{ flex: 1, alignItems: 'center', width: '100%', padding: 10 }}>
           <Navbar />
           <View style={styles.searchBar}> 
-            <TouchableOpacity onPress={() => navigation.navigate('UserSearchBar')} style={{ flex: 1, justifyContent: 'start', marginTop: 2}}>
-              <Ionicons name="search-outline" size={20} color="black" />
+            <TouchableOpacity onPress={() => navigation.navigate('UserSearchBar')} style={styles.userSearchBar}>
+              <Ionicons name="search-outline" size={20} color="black" style={styles.searchIcon}/>
             </TouchableOpacity>
           </View>
           <Text>Discover Screen</Text>
@@ -49,13 +49,22 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   searchBar: {
-    marginBottom: 20,
-    height: 30,
-    width: '100%',
-    borderColor: 'gray',
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 10,
+    marginTop: 70,
+    borderBlockColor: 'black',
     borderWidth: 1,
     borderRadius: 10,
-    marginTop: 70,
+    height: 40,
+  },
+  userSearchBar: {
+    flex: 1, 
+    justifyContent: 'start', 
+    marginTop: 2,
+  },
+  searchIcon: {
+    marginLeft: 10,
   },
 });
 
