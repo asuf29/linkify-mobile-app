@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, TextInput, Button, StyleSheet } from 'react-native';
+import { View, TextInput, Button, StyleSheet, TouchableOpacity, Text } from 'react-native';
 
 const SearchBarComponent = ({ onSearch }) => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -9,6 +9,17 @@ const SearchBarComponent = ({ onSearch }) => {
   };
 
   return (
+    // <View style={styles.container}>
+    //   <TextInput
+    //     style={styles.input}
+    //     placeholder="Search users..."
+    //     value={searchQuery}
+    //     autoCapitalize="none"
+    //     autoFocus={true}
+    //     onChangeText={text => setSearchQuery(text)}
+    //   />
+    //   <Button title="Search" onPress={handleSearch} />
+    // </View>
     <View style={styles.container}>
       <TextInput
         style={styles.input}
@@ -18,7 +29,9 @@ const SearchBarComponent = ({ onSearch }) => {
         autoFocus={true}
         onChangeText={text => setSearchQuery(text)}
       />
-      <Button title="Search" onPress={handleSearch} />
+      <TouchableOpacity onPress={handleSearch} style={styles.button}>
+        <Text style={styles.buttonText}>Search</Text>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -28,15 +41,25 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 10,
-    paddingTop: 40,
+    marginTop: 40,
+    borderBlockColor: 'black',
+    borderWidth: 1,
+    borderRadius: 10,
   },
   input: {
     flex: 1,
-    height: 30,
-    borderColor: 'gray',
-    borderWidth: 1,
-    marginRight: 10,
-    borderRadius: 10,
+    padding: 10,
+  },
+  button: {
+    backgroundColor: '#000',
+    borderTopRightRadius: 10,
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+  },
+  buttonText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    textAlign: 'center',
   },
 });
 
