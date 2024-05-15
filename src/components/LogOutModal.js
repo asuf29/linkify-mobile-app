@@ -56,7 +56,10 @@ const LogOutModal = ({ navigation }) => {
               <Pressable
                 style={tw`rounded-md bg-gray-500 p-2 w-24 items-center justify-center`}
                 onPress={() => {
-                  navigation.navigate('Profile');
+                  navigation.reset({
+                    index: 0,
+                    routes: [{ name: 'ProfileScreen' }],
+                    });
                   setModalVisible(false); 
                 }}>
                 <Text style={tw`items-center font-bold text-white`}>Cancel</Text>
