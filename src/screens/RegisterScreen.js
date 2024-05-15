@@ -60,6 +60,7 @@ const RegisterScreen = ({ navigation }) => {
 
     if ((!email.trim() || !/\S+@\S+\.\S+/.test(email)) && hasFocusedEmail) {
       errors.email = "Email is required";
+      console.log(errors.email)
     } else {
       errors.email = "";
     }
@@ -107,7 +108,6 @@ const RegisterScreen = ({ navigation }) => {
   const handleRegister = () => {
     if (isFormValid) {
       setErrorMessageVisible(false);
-
       const data = {
         user: {
           full_name: fullName,
@@ -130,7 +130,7 @@ const RegisterScreen = ({ navigation }) => {
             navigation.navigate("HomeScreen");
             //save token to local storage
           } else {
-            setRegistrationError(response.data.message);
+            Alert.alert("Error", response.data.message)
           }
         })
         .catch((error) => {
@@ -329,6 +329,7 @@ const RegisterScreen = ({ navigation }) => {
             }`}
             placeholder="Username"
             value={username}
+            autoCapitalize="none"
             onChangeText={(text) => setUsername(text)}
           />
         </View>

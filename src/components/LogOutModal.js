@@ -1,6 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import { Text, View, Modal, Pressable } from 'react-native';
 import LoginScreen from './../screens/LoginScreen';
+import HomeScreen from '../screens/HomeScreen';
 import tw from 'twrnc';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
@@ -46,15 +47,20 @@ const LogOutModal = ({ navigation }) => {
                 onPress={() => {
                   removeToken();
                   setModalVisible(false); 
-                  navigation.navigate('LoginScreen');
-                  
+                  navigation.reset({
+                    index: 0,
+                    routes: [{ name: 'LoginScreen' }],
+                    });
                 }}>
                 <Text style={tw`items-center font-bold text-white`}>Log Out</Text>
               </Pressable>
               <Pressable
                 style={tw`rounded-md bg-gray-500 p-2 w-24 items-center justify-center`}
                 onPress={() => {
-                  navigation.navigate('Profile');
+                  navigation.reset({
+                    index: 0,
+                    routes: [{ name: 'HomeScreen' }],
+                    });
                   setModalVisible(false); 
                 }}>
                 <Text style={tw`items-center font-bold text-white`}>Cancel</Text>
