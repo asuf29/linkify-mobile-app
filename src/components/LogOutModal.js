@@ -46,8 +46,10 @@ const LogOutModal = ({ navigation }) => {
                 onPress={() => {
                   removeToken();
                   setModalVisible(false); 
-                  navigation.navigate('LoginScreen');
-                  
+                  navigation.reset({
+                    index: 0,
+                    routes: [{ name: 'LoginScreen' }],
+                    });
                 }}>
                 <Text style={tw`items-center font-bold text-white`}>Log Out</Text>
               </Pressable>
