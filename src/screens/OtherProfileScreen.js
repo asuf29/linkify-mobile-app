@@ -48,11 +48,13 @@ function OtherProfileScreen(props) {
   const handleFollow = async () => {
     const token = await AsyncStorage.getItem('token');
     const response = await axios.post('https://linkify-backend-test-94b3648c3afa.herokuapp.com/api/profiles/follow_user', {
+      username: username
+    }, {
       headers: {
         'Authorization': `${token}`
-      },
-      params: { username: username },
+      }
     });
+    console.log(response.data);
     if(response.data.code === 200) {
       console.log(response.data);
     }
