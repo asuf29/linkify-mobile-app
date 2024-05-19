@@ -196,13 +196,17 @@ function SharePostScreen() {
           keyExtractor={(item, index) => index.toString()}
           renderItem={({ item, index }) => (
             <View style={styles.productItem}>
-              <View>
-                <Text>Name: {item.name}</Text>
-                <Text>URL: {item.url}</Text>
+              <Image
+                style={tw`w-10 h-10 items-center`}
+                source={item.icon}
+              />
+              <View style={tw`justify-items-center`}>
+                <Text><Text style={tw`font-bold`}>Name: </Text>{item.name}</Text>
+                <Text><Text style={tw`font-bold`}>URL: </Text>{item.url}</Text>
               </View>
               <View>
                 <TouchableOpacity onPress={() => handleDeleteProduct(index)}>
-                  <Ionicons name="trash" size={20} color="black" />
+                  <Ionicons name="trash" size={22} color="black" style={tw`items-center mt-2`}/>
                 </TouchableOpacity>
               </View>
             </View>
@@ -396,7 +400,6 @@ const styles = StyleSheet.create({
     padding: 10,
     borderBottomWidth: 1,
     borderColor: '#ccc',
-    backgroundColor: 'pink',
     justifyContent: 'space-between',
   },
   p_title: {
