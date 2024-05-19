@@ -137,6 +137,7 @@ const App = () => {
         <Stack.Screen name="RegisterScreen" component={RegisterScreen} />
         <Stack.Screen name="UserSearchBar" component={UserSearchBar} />
         <Stack.Screen name="OtherProfileScreen" component={OtherProfileScreen} />
+        <Stack.Screen name="SharePostScreen" component={SharePostScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
