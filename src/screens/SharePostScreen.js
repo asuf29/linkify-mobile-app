@@ -231,6 +231,14 @@ function SharePostScreen() {
         <View style={styles.headerContainer}>
           <Text style={styles.headerText}>New Post</Text>
         </View>
+        <View style={styles.inputContainer}>
+          <TextInput
+            style={styles.postUrlArea}
+            placeholder="Post URL"
+            autoCapitalize="none"
+            onChangeText={(text) => setPostUrl(text)}
+          />
+        </View>
         <View style={styles.webViewContainer}>
           <WebView
             source={{ html: `<iframe width='1000' height='1000' src='${embedPostUrl(postUrl)}' frameborder='0'></iframe>` }}
@@ -362,24 +370,23 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   inputContainer: {
-    marginBottom: 20,
+    marginVertical: 5,
   },
   postUrlArea: {
     borderColor: 'black',
     borderWidth: 1,
     width: 300,
-    height: 50,
+    height: 40,
     marginVertical: 10,
     padding: 10,
     borderRadius: 10,
-    marginTop: 40,
     marginBottom: 5,
   },
   webViewContainer: {
     height: 300,
     width: 300,
     marginBottom: 20,
-    marginTop: 50,
+    marginTop: 10,
   },
   webView: {
     flex: 1,
