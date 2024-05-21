@@ -8,11 +8,15 @@ import { WebView } from 'react-native-webview';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import tw from 'twrnc';
+import HomeScreen from './HomeScreen';
+import { useNavigation } from '@react-navigation/native';
 
 function SharePostScreen() {
+  const navigation = useNavigation();
   const [refreshing, setRefreshing] = React.useState(false);
   const [products, setProducts] = useState([]);
   const [options, setCategoryList] = useState([]);
+  const [postUrl, setPostUrl] = useState('');
 
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
@@ -57,14 +61,13 @@ function SharePostScreen() {
     getCategoryList();
   }, []);
 
-
   const DropdownArea = ({ onAddProduct }) => {
     const [selectedValue, setSelectedValue] = useState(null);
     const [selectedIcon, setSelectedIcon] = useState(null);
     const [productName, setProductName] = useState('');
     const [productUrl, setProductUrl] = useState('');
+    const [productCategory, setProductCategory] = useState('');
     const [isProductBoxVisible, setProductBoxVisibility] = useState(false);
-
     const placeholder = {
       label: 'Select an option...',
       value: null,
@@ -74,8 +77,7 @@ function SharePostScreen() {
     useEffect(() => {
       const selectedOption = options.find(option => option.value === selectedValue);
       setSelectedIcon(selectedValue ? iconUrl(selectedValue) : null);
-      console.log("selectedIcon", selectedIcon)
-      console.log("selectedValue", selectedValue)
+      handleProductCategory(selectedValue)
     }, [selectedValue]);
 
     const handleAddProductBox = () => {
@@ -89,16 +91,22 @@ function SharePostScreen() {
     const handleProductUrl = (text) => {
       setProductUrl(text);
     }
+
+    const handleProductCategory = (text) => {
+      setProductCategory(text);
+    }
   
     const handleAddProduct = () => {
       const newProduct = {
         icon: selectedIcon,
         name: productName,
         url: productUrl,
+        category_id: productCategory,
       };
       onAddProduct(newProduct);
       setProductName('');
       setProductUrl('');
+      setProductCategory('');
       setSelectedValue(null);
       setProductBoxVisibility(false);
     };
@@ -126,7 +134,7 @@ function SharePostScreen() {
           return require("../assets/images/icons/1.png");
       }
     };
-  
+
     return (
       <View style={styles.dropdownContainer}>
         <ScrollView contentContainerStyle={styles.scrollContainer}>
@@ -184,6 +192,29 @@ function SharePostScreen() {
   };
 
   const ProductList = ({ products }) => {
+    const [isProductListVisible, setProductListVisibility] = useState(true);
+
+    // const handleSharePost = async () => {
+    //   try {
+    //     const token = await AsyncStorage.getItem('token');
+    //     const response = await axios.post('https://linkify-backend-test-94b3648c3afa.herokuapp.com/api/posts', {
+
+    //     }, {
+    //       headers: {
+    //         'Authorization': `${token}`
+    //       }
+    //     });
+    //     const { data, code } = response.data;
+    //     if (code === 200) {
+    //       console.log(data)
+    //     } else {
+    //       console.log(data);
+    //     }
+    //   } catch (error) {
+    //     console.log(error);
+    //   }
+    // };
+
     const handleDeleteProduct = (index) => {
       setProducts((prevProducts) => prevProducts.filter((_, i) => i !== index));
     };
@@ -195,26 +226,38 @@ function SharePostScreen() {
           scrollEnabled={false}
           keyExtractor={(item, index) => index.toString()}
           renderItem={({ item, index }) => (
-            <View style={styles.productItem}>
-              <View>
-                <Text>Name: {item.name}</Text>
-                <Text>URL: {item.url}</Text>
-              </View>
-              <View>
-                <TouchableOpacity onPress={() => handleDeleteProduct(index)}>
-                  <Ionicons name="trash" size={20} color="black" />
-                </TouchableOpacity>
+            <View>
+              <View style={styles.productItem}>
+                <Image
+                  style={tw`w-10 h-10 items-center`}
+                  source={item.icon}
+                />
+                <View style={tw`justify-items-center`}>
+                  <Text><Text style={tw`font-bold`}>Name: </Text>{item.name}</Text>
+                  <Text><Text style={tw`font-bold`}>URL: </Text>{item.url}</Text>
+                </View>
+                <View>
+                  <TouchableOpacity onPress={() => handleDeleteProduct(index)}>
+                    <Ionicons name="trash" size={22} color="black" style={tw`items-center mt-2`}/>
+                  </TouchableOpacity>
+                </View>
               </View>
             </View>
           )}
         />
+          {/* <View>
+            <TouchableOpacity onPress={handleSharePost} style={styles.addButton} >
+              <Text style={tw`text-white text-base`}>Share Post</Text>
+            </TouchableOpacity>
+          </View>   */}
+      
       </View>
     );
   };
   
   const renderPostView = () => {
-    const [postUrl, setPostUrl] = useState('');
     const [isProductBoxVisible, setProductBoxVisibility] = useState(false);
+
     const handlePostLoad = () => {
       setProductBoxVisibility(true); 
     };
@@ -225,11 +268,46 @@ function SharePostScreen() {
       const embedUrl = baseUrl.endsWith('/') ? baseUrl + 'embed/' : baseUrl + '/embed/';
       return embedUrl;
     };
-  
+
+    const handleSharePost = async () => {
+      try {
+        const token = await AsyncStorage.getItem('token');
+        console.log("products", products)
+        const response = await axios.post('https://linkify-backend-test-94b3648c3afa.herokuapp.com/api/posts', {
+          url: embedPostUrl(postUrl),
+          products: products
+        }, {
+          headers: {
+            'Authorization': `${token}`
+          }
+        });
+        const { data, code } = response.data;
+        if (code === 200) {
+          console.log(response.data)
+          navigation.reset({
+            index: 0,
+            routes: [{ name: 'HomeScreen' }],
+          });
+        } else {
+          console.log(response.data);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
     return postUrl ? (
       <View style={styles.render_container}>
         <View style={styles.headerContainer}>
           <Text style={styles.headerText}>New Post</Text>
+        </View>
+        <View style={styles.inputContainer}>
+          <TextInput
+            style={styles.postUrlArea}
+            placeholder="Post URL"
+            autoCapitalize="none"
+            onChangeText={(text) => setPostUrl(text)}
+          />
         </View>
         <View style={styles.webViewContainer}>
           <WebView
@@ -238,6 +316,9 @@ function SharePostScreen() {
             onLoad={handlePostLoad}
           />
         </View>
+          <TouchableOpacity onPress={handleSharePost} style={styles.addButton} >
+            <Text style={tw`text-white text-base`}>Share Post</Text>
+          </TouchableOpacity>
       </View>
     ) : (
       <View style={styles.render_container}>
@@ -255,6 +336,7 @@ function SharePostScreen() {
       </View>
     );
   };
+
 
   return (
     <View style={styles.container}>
@@ -279,8 +361,8 @@ function SharePostScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
     alignItems: 'center',
+    justifyContent: 'center',
   },
   scrollContainer: {
     flexGrow: 1,
@@ -362,24 +444,23 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   inputContainer: {
-    marginBottom: 20,
+    marginVertical: 5,
   },
   postUrlArea: {
     borderColor: 'black',
     borderWidth: 1,
     width: 300,
-    height: 50,
+    height: 40,
     marginVertical: 10,
     padding: 10,
     borderRadius: 10,
-    marginTop: 40,
     marginBottom: 5,
   },
   webViewContainer: {
     height: 300,
     width: 300,
     marginBottom: 20,
-    marginTop: 50,
+    marginTop: 10,
   },
   webView: {
     flex: 1,
@@ -389,7 +470,6 @@ const styles = StyleSheet.create({
     padding: 10,
     borderBottomWidth: 1,
     borderColor: '#ccc',
-    backgroundColor: 'pink',
     justifyContent: 'space-between',
   },
   p_title: {
