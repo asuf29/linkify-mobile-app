@@ -219,11 +219,11 @@ const HomeScreen = () => {
               <TouchableOpacity onPress={() => openModal(product)}>
                 <View style={{ width: imageSize, height: imageSize }}>
                   <Image
-                    style={tw`flex-1 w-full h-full aspect-ratio: 1 rounded-lg`}
+                    style={tw`flex-1 ml-2 w-25 h-full aspect-ratio: 1 rounded-lg`}
                     resizeMode="contain"
                     source={iconUrl(product.category_id)}
                   />
-                  <Text style={tw`text-center`}>{product.name}</Text>
+                  {/* <Text style={tw`text-center`}>{product.name}</Text> */}
                 </View>
               </TouchableOpacity>
             )}
