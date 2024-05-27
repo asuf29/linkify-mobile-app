@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { Text, View, StyleSheet, TouchableOpacity, FlatList, Image } from 'react-native';
+import React, {useState, useEffect} from 'react';
+import { Text, View, StyleSheet, FlatList, Image, TouchableOpacity } from 'react-native';
 import Navbar from './../components/Navbar';
 import { RefreshControl, ScrollView } from 'react-native-gesture-handler';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -8,6 +8,8 @@ import UserSearchBar from './UserSearchBar';
 import { Ionicons } from '@expo/vector-icons';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { WebView } from 'react-native-webview';
+import tw from 'twrnc';
 
 const iconUrl = (value) => {
   console.log("value", value)
@@ -37,6 +39,7 @@ function DiscoverScreen() {
   const navigation = useNavigation();
   const [refreshing, setRefreshing] = React.useState(false);
   const [categoryList, setCategoryList] = useState([]);
+  const [discoverPosts, setDiscoverPosts] = useState([]);
 
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
@@ -75,6 +78,46 @@ function DiscoverScreen() {
     </TouchableOpacity>
   );
   
+  useEffect(() => {
+    const fetchDiscoverPosts = async () => {
+      try {
+        const token = await AsyncStorage.getItem('token');
+        const response = await axios.get('https://linkify-backend-test-94b3648c3afa.herokuapp.com/api/posts/current_posts', {
+          headers: {
+            'Authorization': `${token}`
+          }
+        });
+        const { data, code } = response.data;
+        if (code === 200) {
+          setDiscoverPosts(data);
+        } else {
+          console.log(data);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchDiscoverPosts();
+  }, []);
+
+  const embedPostUrl = (url) => {
+    if (!url) return "";
+    return url.split("?")[0];
+  };
+
+  const renderPostView = (url) => {
+    if (!url) return null;
+    return (
+      <View style={styles.webViewContainer}>
+        <WebView
+          originWhitelist={['*']}
+          source={{ html: `<iframe width='700' height='1000' src='${embedPostUrl(url)}' frameborder='0'></iframe>` }}
+          style={styles.webView}
+        />
+      </View>
+    );
+  };
+
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView
@@ -89,7 +132,6 @@ function DiscoverScreen() {
               <Ionicons name="search-outline" size={20} color="black" style={styles.searchIcon}/>
             </TouchableOpacity>
           </View>
-          <Text>Discover Screen</Text>
           <FlatList
             data={categoryList}
             renderItem={renderCategoryItem}
@@ -97,6 +139,15 @@ function DiscoverScreen() {
             horizontal={true}
             contentContainerStyle={styles.categoryList}
           />
+          <View style={styles.postContainer}>
+          {discoverPosts.map((item, index) => (
+            <View key={index} style={styles.postItem}>
+              <View style={tw`flex flex-row mb-2`}>
+                {renderPostView(item.url)}
+              </View>
+            </View>
+          ))}
+          </View>
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -132,6 +183,7 @@ const styles = StyleSheet.create({
   },
   categoryList: {
     paddingVertical: 10,
+    height: 120,
   },
   categoryItem: {
     backgroundColor: '#f0f0f0',
@@ -150,6 +202,31 @@ const styles = StyleSheet.create({
     marginHorizontal: 5,
     marginTop: 5,
     alignItems: 'center',
+  },
+  postContainer: {
+    width: '100%',
+    height: 430,
+    padding: 10,
+    flexWrap: 'wrap',
+    flexDirection: 'row',
+  },
+  postItem: {
+    width: 150,
+    height: 150,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc',
+    marginHorizontal: 4,
+    marginVertical: 2,
+    marginBottom: 10,
+    flexDirection: 'row', 
+    marginTop: 10,
+  },
+  webViewContainer: {
+    height: 200,
+    width: 200,
+  },
+  webView: {
+    flex: 1,
   },
 });
 
