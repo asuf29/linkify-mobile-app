@@ -18,6 +18,8 @@ import SharePostScreen from './screens/SharePostScreen';
 import EditProfileScreen from './screens/EditProfileScreen';
 import UserSearchBar from './screens/UserSearchBar';
 import OtherProfileScreen from './screens/OtherProfileScreen';
+import ViewFollowingScreen from './screens/ViewFollowingScreen';
+import ViewFollowersScreen from './screens/ViewFollowersScreen';
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -138,6 +140,8 @@ const App = () => {
         <Stack.Screen name="UserSearchBar" component={UserSearchBar} />
         <Stack.Screen name="OtherProfileScreen" component={OtherProfileScreen} />
         <Stack.Screen name="SharePostScreen" component={SharePostScreen} />
+        <Stack.Screen name="ViewFollowingScreen" component={ViewFollowingScreen} />
+        <Stack.Screen name="ViewFollowersScreen" component={ViewFollowersScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );

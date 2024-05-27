@@ -5,6 +5,8 @@ import Navbar from './../components/Navbar';
 import tw from 'twrnc';
 import LoginScreen from './LoginScreen';
 import EditProfileScreen from './EditProfileScreen';
+import ViewFollowersScreen from './ViewFollowersScreen';
+import ViewFollowingScreen from './ViewFollowingScreen';
 import LogOutModal from '../components/LogOutModal';
 import CustomDrawerContent from '../components/CustomDrawerContent';
 import axios from 'axios';
@@ -93,6 +95,14 @@ function Feed({ navigation }) {
     );
   };
 
+  const handleViewFollowers = () => {
+    navigation.navigate('ViewFollowersScreen');
+  }
+
+  const handleViewFollowing = () => {
+    navigation.navigate('ViewFollowingScreen');
+  }
+
   return (
     <View style={styles.container}>
       <Navbar />
@@ -125,14 +135,18 @@ function Feed({ navigation }) {
           <View style={tw`flex-row mx-8`}>
             {userData ? (
               <View style={tw`items-center mr-10`}>
-                <Text style={tw`text-lg font-bold`}>{userData.user.followers}</Text>
-                <Text style={tw`text-sm font-medium`}>followers</Text>
+                <TouchableOpacity onPress={handleViewFollowers}>
+                  <Text style={tw`text-lg font-bold ml-6`}>{userData.user.followers}</Text>
+                  <Text style={tw`text-sm font-medium`}>followers</Text>
+                </TouchableOpacity>
               </View>
             ) : null}
             {userData ? (
               <View style={tw`items-center`}>
-                <Text style={tw`text-lg font-bold`}>{userData.user.followings}</Text>
-                <Text style={tw`text-sm font-medium`}>following</Text>
+                <TouchableOpacity onPress={handleViewFollowing}>
+                  <Text style={tw`text-lg font-bold ml-6`}>{userData.user.followings}</Text>
+                  <Text style={tw`text-sm font-medium`}>following</Text>
+                </TouchableOpacity>
               </View>
             ) : null}
           </View>
