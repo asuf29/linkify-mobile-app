@@ -10,73 +10,44 @@ import {
   StyleSheet,
 } from "react-native";
 import Navbar from "./../components/Navbar";
-import ProductPicker from "../components/ProductPickerModal";
+import ProductPickerModal from "../components/ProductPickerModal"; // Doğru bileşeni içe aktarın
 import { SafeAreaView } from "react-native-safe-area-context";
+import { Ionicons } from "@expo/vector-icons";
+import { WebView } from "react-native-webview";
 import Carousel from "react-native-snap-carousel";
 import Icon from "react-native-vector-icons/FontAwesome";
 import tw from "twrnc";
+import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import FavoriteScreen from "./FavoriteScreen";
 
 const windowDimensions = Dimensions.get("window");
 const numVisibleImages = 3;
 const imageSize = windowDimensions.width / numVisibleImages;
 
-const profileData = [
-  {
-    id: "1",
-    username: "damlakasal1",
-    image: require("../assets/home-screen/outfit.jpg"),
-  },
-  {
-    id: "2",
-    username: "damlakasal2",
-    image: require("../assets/home-screen/outfit.jpg"),
-  },
-  {
-    id: "3",
-    username: "damlakasal3",
-    image: require("../assets/home-screen/outfit.jpg"),
-  },
-  {
-    id: "4",
-    username: "damlakasal4",
-    image: require("../assets/home-screen/outfit.jpg"),
-  },
-  {
-    id: "5",
-    username: "damlakasal5",
-    image: require("../assets/home-screen/outfit.jpg"),
-  },
-];
-
 const HomeScreen = () => {
   const [iconColor, setIconColor] = useState({});
-
   const [carouselData, setCarouselData] = useState([]);
-  const [selectedItemId, setSelectedItemId] = useState(null); // Seçilen öğenin ID'sini tutan state'i oluştur
-
+  const [selectedItemId, setSelectedItemId] = useState(null);
   const [isModalVisible, setModalVisible] = useState(false);
+  const [postData, setPostData] = useState([]); // JSON verisini tutmak için state
+  const [token, setToken] = useState(null);
+  const [postUrl, setPostUrl] = useState("");
+  const [favoritePosts, setFavoritePosts] = useState([]);
 
-  const openModal = (itemId) => {
-    setSelectedItemId(itemId);
+  const openModal = (product) => {
+    setSelectedItemId(product);
     setModalVisible(true);
   };
 
   const onModalClose = () => {
     setModalVisible(false);
-  };
-
-  const imageWidth = windowDimensions.width;
-  const imageHeight = imageWidth;
-
-  const handlePress = (itemId) => {
-    const newIconColors = { ...iconColor };
-    newIconColors[itemId] = newIconColors[itemId] === "black" ? "red" : "black";
-    setIconColor(newIconColors);
+    setSelectedItemId(null); // Modal kapandığında seçili öğeyi sıfırla
   };
 
   useEffect(() => {
     const initialIconColors = {};
-    profileData.forEach((data) => {
+    postData.forEach((data) => {
       initialIconColors[data.id] = "black";
     });
     setIconColor(initialIconColors);
@@ -89,14 +60,116 @@ const HomeScreen = () => {
       { id: "4", image: require("../assets/home-screen/earring.jpg") },
       { id: "5", image: require("../assets/home-screen/skirt.jpg") },
     ]);
+  }, [postData]);
+
+  const iconUrl = (value) => {
+    console.log("value", value);
+    switch (value) {
+      case 1:
+        return require("../assets/images/icons/1.png");
+      case 2:
+        return require("../assets/images/icons/2.png");
+      case 3:
+        return require("../assets/images/icons/3.png");
+      case 4:
+        return require("../assets/images/icons/4.png");
+      case 5:
+        return require("../assets/images/icons/5.png");
+      case 6:
+        return require("../assets/images/icons/6.png");
+      case 7:
+        return require("../assets/images/icons/7.png");
+      case 8:
+        return require("../assets/images/icons/8.png");
+      default:
+        return null;
+    }
+  };
+
+  useEffect(() => {
+    const fetchPostData = async () => {
+      try {
+        const token = await AsyncStorage.getItem("token");
+        const response = await axios.get(
+          "https://linkify-backend-test-94b3648c3afa.herokuapp.com/api/posts",
+          {
+            headers: {
+              Authorization: `${token}`,
+            },
+          }
+        );
+        const { data, code } = response.data;
+        if (code === 200) {
+          console.log(token);
+          console.log(response.data);
+          setPostData(data);
+          console.log(postData);
+        } else {
+          console.log(data);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchPostData();
   }, []);
+
+  const handlePress = async (itemId) => {
+    const newIconColors = { ...iconColor };
+    newIconColors[itemId] = newIconColors[itemId] === "black" ? "red" : "black";
+    setIconColor(newIconColors);
+
+    if (newIconColors[itemId] === "red") {
+      try {
+        const token = await AsyncStorage.getItem("token");
+       const response = await axios.post(
+          "https://linkify-backend-test-94b3648c3afa.herokuapp.com/api/posts/favorite_post",
+          { post_id: itemId },
+          {
+            headers: {
+              'Authorization': `${token}`,
+            },
+          }
+
+        );
+        const { data, code } = response;
+        if (code === 200) {
+          console.log(token);
+          console.log(response);
+          setFavoritePosts(data);
+          console.log(favoritePosts);
+        } else {
+          console.log(data);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+  };}
+
+  const embedPostUrl = (url) => {
+    if (!url) return "";
+    return url.split("?")[0];
+  };
+
+  const renderPostView = (url) => {
+    if (!url) return null;
+    return (
+      <View style={styles.webViewContainer}>
+        <WebView
+          source={{ html: `<iframe width='1000' height='1000' src='${embedPostUrl(url)}' frameborder='0'></iframe>` }}
+          style={styles.webView}
+        />
+      </View>
+    );
+  };
+
   const renderCarouselItem = ({ item }) => (
     <TouchableOpacity onPress={() => openModal(item.id)}>
       <View style={{ width: imageSize, height: imageSize }}>
         <Image
           style={tw`flex-1  w-full h-full aspect-ratio: 1 rounded-lg`}
           resizeMode="contain"
-          source={item.image}
+          source={iconUrl(item.id)}
         />
       </View>
     </TouchableOpacity>
@@ -104,23 +177,25 @@ const HomeScreen = () => {
 
   const renderItem = ({ item }) => (
     <ScrollView>
-      <View key={item.id}>
+      <View key={item.id} style={tw`px-2`}>
         <View style={tw`flex-row p-2 items-center`}>
           <View style={tw`w-1/12`}>
-            <Icon name="user-circle" size={30} color="black" />
+            {item.user.avatar ? (
+              <Image
+                source={{ uri: item.user.avatar }}
+                style={{ width: 30, height: 30, borderRadius: 15 }}
+              />
+            ) : (
+              <Icon name="user-circle" size={30} color="black" />
+            )}
           </View>
+
           <View style={[tw`w-11/12`, { paddingLeft: 10 }]}>
-            <Text style={tw`text-xl font-bold`}>{item.username}</Text>
+            <Text style={tw`text-xl`}>{item.user.username}</Text>
           </View>
         </View>
         <View style={tw`flex-row relative`}>
-          <Image
-            style={{
-              width: imageWidth,
-              height: imageHeight,
-            }}
-            source={item.image}
-          />
+          {renderPostView(item.url)}
           <TouchableOpacity
             onPress={() => handlePress(item.id)}
             style={tw`absolute bottom-0 right-0`}
@@ -129,22 +204,28 @@ const HomeScreen = () => {
               name="heart"
               size={30}
               color={iconColor[item.id] || "black"}
+              style={tw`p-2`}
             />
           </TouchableOpacity>
         </View>
         <View style={tw`flex mt-2`}>
           <Carousel
             layout="default"
-            data={carouselData}
+            data={item.products} // Her post'un products listesini kullanın
             sliderWidth={windowDimensions.width}
             itemWidth={imageSize}
-            renderItem={renderCarouselItem}
-          />
-          <ProductPicker
-            isVisible={isModalVisible}
-            onClose={onModalClose}
-            selectedItemId={selectedItemId}
-            carouselData={carouselData}
+            renderItem={({ item: product }) => (
+              <TouchableOpacity onPress={() => openModal(product)}>
+                <View style={{ width: imageSize, height: imageSize }}>
+                  <Image
+                    style={tw`flex-1 w-full h-full aspect-ratio: 1 rounded-lg`}
+                    resizeMode="contain"
+                    source={iconUrl(product.category_id)}
+                  />
+                  <Text style={tw`text-center`}>{product.name}</Text>
+                </View>
+              </TouchableOpacity>
+            )}
           />
         </View>
       </View>
@@ -155,12 +236,32 @@ const HomeScreen = () => {
     <SafeAreaView style={[tw`flex-1 justify-center pt-14`]}>
       <Navbar />
       <FlatList
-        data={profileData}
+        data={postData}
         renderItem={renderItem}
-        keyExtractor={(item) => item.id}
+        keyExtractor={(item) => item.id.toString()}
+      />
+      <ProductPickerModal
+        isVisible={isModalVisible}
+        onClose={onModalClose}
+        selectedItemData={selectedItemId}
+        carouselData={postData}
       />
     </SafeAreaView>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: "center",
+  },
+  webViewContainer: {
+    height: 400,
+    width: "100%",
+  },
+  webView: {
+    flex: 1,
+  },
+});
 
 export default HomeScreen;
