@@ -214,6 +214,7 @@ const HomeScreen = () => {
             data={item.products} // Her post'un products listesini kullanın
             sliderWidth={windowDimensions.width}
             itemWidth={imageSize}
+            activeSlideAlignment="start" 
             renderItem={({ item: product }) => (
               <TouchableOpacity onPress={() => openModal(product)}>
                 <View style={{ width: imageSize, height: imageSize }}>

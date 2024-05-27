@@ -67,7 +67,7 @@ function FavoriteScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-       <Text style={[tw`w-full items-center justify-center border-b border-gray-300`,styles.postTitle]}> Favorite Posts</Text>
+       <Text style={[tw`w-full text-center border-b border-gray-300`,styles.postTitle]}> Favorite Posts</Text>
       <Navbar />
      
       {error ? (
@@ -119,7 +119,6 @@ const styles = StyleSheet.create({
   postTitle: {
     fontSize: 25,
     fontWeight: 'bold',
-    paddingHorizontal: 120,
     paddingTop: 50,
   
   },
