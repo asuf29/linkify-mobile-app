@@ -5,6 +5,7 @@ import Navbar from './../components/Navbar';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import axios from 'axios';
+import { WebView } from 'react-native-webview';
 
 function OtherProfileScreen(props) {
   const navigation = useNavigation();
@@ -12,6 +13,7 @@ function OtherProfileScreen(props) {
   const [userData, setUserData] = useState(null);
   const [isFollowed, setIsFollowed] = useState(false);
   const [refreshing, setRefreshing] = React.useState(false);
+  const [otherUserPosts, setOtherUserPosts] = useState([]);
 
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
@@ -44,6 +46,47 @@ function OtherProfileScreen(props) {
     handleOtherProfile();
   }, []);
  
+  useEffect(() => {
+    const fetchOtherUserPosts = async () => {
+      try {
+        const token = await AsyncStorage.getItem('token');
+        const response = await axios.get('https://linkify-backend-test-94b3648c3afa.herokuapp.com/api/posts/user_posts', {
+          params: { username: username },  
+          headers: {
+              'Authorization': `${token}`
+            },
+        });
+        const { data, code } = response.data;
+        if (code === 200) {
+          setOtherUserPosts(data);
+        } else {
+          console.log(data);
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchOtherUserPosts();
+  }, []);
+
+  const embedPostUrl = (url) => {
+    if (!url) return "";
+    return url.split("?")[0];
+  };
+
+  const renderPostView = (url) => {
+    if (!url) return null;
+    return (
+      <View style={styles.webViewContainer}>
+        <WebView
+          originWhitelist={['*']}
+          source={{ html: `<iframe width='500' height='600' src='${embedPostUrl(url)}' frameborder='0'></iframe>` }}
+          style={styles.webView}
+        />
+      </View>
+    );
+  };
+
 
   const handleFollow = async () => {
     const token = await AsyncStorage.getItem('token');
@@ -120,6 +163,15 @@ function OtherProfileScreen(props) {
             <Text style={styles.followButtonText}>{isFollowed ? 'unfollow' : 'follow'}</Text>
           </TouchableOpacity>
         </View>
+        <View style={styles.postContainer}>
+          {otherUserPosts.map((item, index) => (
+            <View key={index} style={styles.postItem}>
+              <View style={tw`flex flex-row mb-2`}>
+                {renderPostView(item.url)}
+              </View>
+            </View>
+          ))}
+        </View>
       </ScrollView>
     </View>
   );
@@ -165,6 +217,27 @@ const styles = StyleSheet.create({
     color: 'white',
     textAlign: 'center',
     fontSize: 16,
+  },
+  postContainer: {
+    width: '100%',
+    marginTop: 20,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+  },
+  postItem: {
+    width: 120,
+    height: 120,
+    borderBottomWidth: 1,
+    borderBottomColor: '#ccc',
+    marginHorizontal: 4,
+    marginVertical: 2,
+  },
+  webViewContainer: {
+    height: 120,
+    width: '100%',
+  },
+  webView: {
+    flex: 1,
   },
 });
 
