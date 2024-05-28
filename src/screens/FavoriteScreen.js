@@ -1,17 +1,19 @@
 import React, { useEffect, useState } from 'react';
-import { StyleSheet, View, Text, Dimensions } from 'react-native';
+import { StyleSheet, View, Text, Dimensions, TouchableOpacity } from 'react-native';
 import Navbar from './../components/Navbar';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import tw from "twrnc";
 import { WebView } from 'react-native-webview';
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useNavigation } from '@react-navigation/native';
 
 function FavoriteScreen() {
   const [favoritePosts, setFavoritePosts] = useState([]);
   const [error, setError] = useState(null);
   const windowWidth = Dimensions.get('window').width;
   const itemWidth = (windowWidth - 32) / 3;
+  const navigation = useNavigation();
 
   useEffect(() => { 
     const fetchFavoritePosts = async () => {
@@ -51,16 +53,17 @@ function FavoriteScreen() {
     return url.split("?")[0];
   };
 
-  const renderPostView = (url) => {
-    if (!url) return null;
+  const renderPostView = (item) => {
+    if (!item) return null;
     return (
       <View style={styles.webViewContainer}>
       
         <WebView
           originWhitelist={['*']}
-          source={{ html: `<iframe width='500' height='600' src='${embedPostUrl(url)}' frameborder='0'></iframe>` }}
+          source={{ html: `<iframe width='500' height='600' src='${embedPostUrl(item.url)}' frameborder='0'></iframe>` }}
           style={styles.webView}
         />
+        <TouchableOpacity onPress={() =>navigation.navigate('PostViewScreen', {postData: item})} style={{backgroundColor: 'rgba(0, 0, 0, 0)', position: 'absolute', width: '100%',height: '100%'}}></TouchableOpacity>
       </View>
     );
   };
@@ -81,7 +84,7 @@ function FavoriteScreen() {
             <View key={index} style={[styles.postItem, { width: itemWidth, marginLeft: index % 4 === 0 ? 0 : 4 }]}>
 
               <View style={tw`flex-row relative`}>
-                {renderPostView(item.url)}
+                {renderPostView(item)}
               </View>
             </View>
           ))}

@@ -82,9 +82,6 @@ const UserSearchBar = () => {
                   <Text style={tw`text-gray-700`}>{item.full_name}</Text>
                 </TouchableOpacity>
               </View>
-              {/* <View style={tw`flex-1 items-end`}>
-                <Ionicons name="close" size={20} style={tw`text-gray-500`}/>
-              </View> */}
             </View>
           )}
           />
