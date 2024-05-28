@@ -82,15 +82,16 @@ function Feed({ navigation }) {
     return url.split("?")[0];
   };
 
-  const renderPostView = (url) => {
-    if (!url) return null;
+  const renderPostView = (item) => {
+    if (!item) return null;
     return (
       <View style={styles.webViewContainer}>
         <WebView
           originWhitelist={['*']}
-          source={{ html: `<iframe width='500' height='600' src='${embedPostUrl(url)}' frameborder='0'></iframe>` }}
+          source={{ html: `<iframe width='500' height='600' src='${embedPostUrl(item.url)}' frameborder='0'></iframe>` }}
           style={styles.webView}
         />
+        <TouchableOpacity onPress={() =>navigation.navigate('PostViewScreen', {postData: item})} style={{backgroundColor: 'rgba(0, 0, 0, 0)', position: 'absolute', width: '100%',height: '100%'}}></TouchableOpacity>
       </View>
     );
   };
@@ -176,7 +177,7 @@ function Feed({ navigation }) {
         {userPosts.map((item, index) => (
           <View key={index} style={styles.postItem}>
              <View style={tw`flex flex-row mb-2`}>
-              {renderPostView(item.url)}
+              {renderPostView(item)}
             </View>
           </View>
         ))}

@@ -18,6 +18,7 @@ import SharePostScreen from './screens/SharePostScreen';
 import EditProfileScreen from './screens/EditProfileScreen';
 import UserSearchBar from './screens/UserSearchBar';
 import OtherProfileScreen from './screens/OtherProfileScreen';
+import PostViewScreen from './screens/PostViewScreen';
 import ViewFollowingScreen from './screens/ViewFollowingScreen';
 import ViewFollowersScreen from './screens/ViewFollowersScreen';
 
@@ -141,6 +142,7 @@ const App = () => {
         <Stack.Screen name="OtherProfileScreen" component={OtherProfileScreen} />
         <Stack.Screen name="SharePostScreen" component={SharePostScreen} />
         <Stack.Screen name="ViewFollowingScreen" component={ViewFollowingScreen} />
+        <Stack.Screen name="PostViewScreen" component={PostViewScreen} />
         <Stack.Screen name="ViewFollowersScreen" component={ViewFollowersScreen} />
       </Stack.Navigator>
     </NavigationContainer>

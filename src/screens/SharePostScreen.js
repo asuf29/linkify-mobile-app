@@ -315,6 +315,7 @@ function SharePostScreen() {
             style={styles.webView}
             onLoad={handlePostLoad}
           />
+          <View style={{backgroundColor: 'rgba(0, 0, 0, 0)', position: 'absolute', width: '100%',height: '100%'}}></View>
         </View>
           <TouchableOpacity onPress={handleSharePost} style={styles.addButton} >
             <Text style={tw`text-white text-base`}>Share Post</Text>

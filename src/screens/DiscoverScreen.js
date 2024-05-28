@@ -72,31 +72,33 @@ function DiscoverScreen() {
     handleCategoryList();
   }, []);
 
+  const fetchDiscoverPosts = async (category_id) => {
+    try {
+      const token = await AsyncStorage.getItem('token');
+      const response = await axios.get('https://linkify-backend-test-94b3648c3afa.herokuapp.com/api/posts/all_posts', {
+        params: { category_id: category_id },
+        headers: {
+          'Authorization': `${token}`
+        }
+      });
+      const { data, code } = response.data;
+      if (code === 200) {
+        setDiscoverPosts(data);
+      } else {
+        console.log(data);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const renderCategoryItem = ({ item }) => (
-    <TouchableOpacity style={styles.categoryItem}>
+    <TouchableOpacity style={styles.categoryItem} onPress={() => fetchDiscoverPosts(item.id)}>
       <Image source={iconUrl(item.id)} style={styles.icon} />
     </TouchableOpacity>
   );
   
   useEffect(() => {
-    const fetchDiscoverPosts = async () => {
-      try {
-        const token = await AsyncStorage.getItem('token');
-        const response = await axios.get('https://linkify-backend-test-94b3648c3afa.herokuapp.com/api/posts/current_posts', {
-          headers: {
-            'Authorization': `${token}`
-          }
-        });
-        const { data, code } = response.data;
-        if (code === 200) {
-          setDiscoverPosts(data);
-        } else {
-          console.log(data);
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    };
     fetchDiscoverPosts();
   }, []);
 
@@ -105,15 +107,16 @@ function DiscoverScreen() {
     return url.split("?")[0];
   };
 
-  const renderPostView = (url) => {
-    if (!url) return null;
+  const renderPostView = (item) => {
+    if (!item) return null;
     return (
       <View style={styles.webViewContainer}>
         <WebView
           originWhitelist={['*']}
-          source={{ html: `<iframe width='700' height='1000' src='${embedPostUrl(url)}' frameborder='0'></iframe>` }}
+          source={{ html: `<iframe width='100%' height='100%' src='${embedPostUrl(item.url)}' frameborder='0'></iframe>` }}
           style={styles.webView}
         />
+        <TouchableOpacity onPress={() =>navigation.navigate('PostViewScreen', {postData: item})} style={{backgroundColor: 'rgba(0, 0, 0, 0)', position: 'absolute', width: '100%',height: '100%'}}></TouchableOpacity>
       </View>
     );
   };
@@ -127,27 +130,29 @@ function DiscoverScreen() {
         }>
         <View style={{ flex: 1, alignItems: 'center', width: '100%', padding: 10 }}>
           <Navbar />
-          <View style={styles.searchBar}> 
-            <TouchableOpacity onPress={() => navigation.navigate('UserSearchBar')} style={styles.userSearchBar}>
-              <Ionicons name="search-outline" size={20} color="black" style={styles.searchIcon}/>
-            </TouchableOpacity>
-          </View>
-          <FlatList
-            data={categoryList}
-            renderItem={renderCategoryItem}
-            keyExtractor={(item) => item.id.toString()}
-            horizontal={true}
-            contentContainerStyle={styles.categoryList}
-          />
-          <View style={styles.postContainer}>
-          {discoverPosts.map((item, index) => (
-            <View key={index} style={styles.postItem}>
-              <View style={tw`flex flex-row mb-2`}>
-                {renderPostView(item.url)}
-              </View>
+          <ScrollView>
+            <View style={styles.searchBar}> 
+              <TouchableOpacity onPress={() => navigation.navigate('UserSearchBar')} style={styles.userSearchBar}>
+                <Ionicons name="search-outline" size={20} color="black" style={styles.searchIcon}/>
+              </TouchableOpacity>
             </View>
-          ))}
-          </View>
+            <FlatList
+              data={categoryList}
+              renderItem={renderCategoryItem}
+              keyExtractor={(item) => item.id.toString()}
+              horizontal={true}
+              contentContainerStyle={styles.categoryList}
+            />
+            <View style={styles.postContainer}>
+            {discoverPosts.map((item, index) => (
+              <View key={index} style={styles.postItem}>
+                <View style={tw`flex flex-row flex-wrap`}>
+                  {renderPostView(item)}
+                </View>
+              </View>
+            ))}
+            </View>
+          </ScrollView>
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -182,8 +187,8 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
   categoryList: {
-    paddingVertical: 10,
-    height: 120,
+    paddingVertical: 0,
+    height: "100%",
   },
   categoryItem: {
     backgroundColor: '#f0f0f0',
@@ -205,7 +210,6 @@ const styles = StyleSheet.create({
   },
   postContainer: {
     width: '100%',
-    height: 430,
     padding: 10,
     flexWrap: 'wrap',
     flexDirection: 'row',

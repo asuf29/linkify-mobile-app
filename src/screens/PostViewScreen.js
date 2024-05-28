@@ -19,14 +19,13 @@ import Icon from "react-native-vector-icons/FontAwesome";
 import tw from "twrnc";
 import axios from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import FavoriteScreen from "./FavoriteScreen";
 import { useNavigation } from '@react-navigation/native';
 
 const windowDimensions = Dimensions.get("window");
 const numVisibleImages = 3;
 const imageSize = windowDimensions.width / numVisibleImages;
 
-const HomeScreen = () => {
+const PostViewScreen = (props) => {
   const [iconColor, setIconColor] = useState({});
   const [carouselData, setCarouselData] = useState([]);
   const [selectedItemId, setSelectedItemId] = useState(null);
@@ -50,7 +49,7 @@ const HomeScreen = () => {
   useEffect(() => {
     const initialIconColors = {};
     postData.forEach((data) => {
-      initialIconColors[data.id] = data.favorite_by_user ? "red" : "black";
+      initialIconColors[data.id] = data.favorite_by_user ? "red" :"black";
     });
     setIconColor(initialIconColors);
 
@@ -90,28 +89,8 @@ const HomeScreen = () => {
 
   useEffect(() => {
     const fetchPostData = async () => {
-      try {
-        const token = await AsyncStorage.getItem("token");
-        const response = await axios.get(
-          "https://linkify-backend-test-94b3648c3afa.herokuapp.com/api/posts",
-          {
-            headers: {
-              Authorization: `${token}`,
-            },
-          }
-        );
-        const { data, code } = response.data;
-        if (code === 200) {
-          console.log(token);
-          console.log(response.data);
-          setPostData(data);
-          console.log(postData);
-        } else {
-          console.log(data);
-        }
-      } catch (error) {
-        console.log(error);
-      }
+      data = props.route.params.postData;
+      setPostData([data]);
     };
     fetchPostData();
   }, []);
@@ -134,10 +113,7 @@ const HomeScreen = () => {
       );
       const { data, code } = response;
       if (code === 200) {
-        console.log(token);
-        console.log(response);
         setFavoritePosts(data);
-        console.log(favoritePosts);
       } else {
         console.log(data);
       }
@@ -266,4 +242,4 @@ const styles = StyleSheet.create({
   }
 });
 
-export default HomeScreen;
+export default PostViewScreen;

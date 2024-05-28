@@ -35,6 +35,7 @@ function OtherProfileScreen(props) {
         if( response.data.code === 200) {
           console.log(response.data.data.user.personal_info);
           setUserData(response.data);
+          setIsFollowed(response.data.data.user.is_following)
         }
         else {
           console.log(response.data);
@@ -74,15 +75,16 @@ function OtherProfileScreen(props) {
     return url.split("?")[0];
   };
 
-  const renderPostView = (url) => {
-    if (!url) return null;
+  const renderPostView = (item) => {
+    if (!item) return null;
     return (
       <View style={styles.webViewContainer}>
         <WebView
           originWhitelist={['*']}
-          source={{ html: `<iframe width='500' height='600' src='${embedPostUrl(url)}' frameborder='0'></iframe>` }}
+          source={{ html: `<iframe width='500' height='600' src='${embedPostUrl(item.url)}' frameborder='0'></iframe>` }}
           style={styles.webView}
         />
+        <TouchableOpacity onPress={() =>navigation.navigate('PostViewScreen', {postData: item})} style={{backgroundColor: 'rgba(0, 0, 0, 0)', position: 'absolute', width: '100%',height: '100%'}}></TouchableOpacity>
       </View>
     );
   };
@@ -137,19 +139,23 @@ function OtherProfileScreen(props) {
             ) : null}
             </View>
             <View style={tw`flex-row mx-8`}>
-            {userData ? (
-              <View style={tw`items-center mr-10`}>
-                <Text style={tw`text-lg font-bold`}>{userData.data.user.followers}</Text>
-                <Text style={tw`text-sm font-medium`}>followers</Text>
-              </View>
-            ) : null}
-            {userData ? (
-              <View style={tw`items-center`}>
-                <Text style={tw`text-lg font-bold`}>{userData.data.user.followings}</Text>
-                <Text style={tw`text-sm font-medium`}>following</Text>
-              </View>
-            ) : null}
-          </View>
+              {userData ? (
+                <View style={tw`items-center mr-10`}>
+                  <TouchableOpacity onPress={() => navigation.navigate('ViewFollowersScreen', {username: userData.data.user.personal_info.username})}>
+                    <Text style={tw`text-lg font-bold ml-6`}>{userData.data.user.followers}</Text>
+                    <Text style={tw`text-sm font-medium`}>followers</Text>
+                  </TouchableOpacity>
+                </View>
+              ) : null}
+              {userData ? (
+                <View style={tw`items-center`}>
+                  <TouchableOpacity onPress={() => navigation.navigate('ViewFollowingScreen', {username: userData.data.user.personal_info.username})}>
+                    <Text style={tw`text-lg font-bold ml-6`}>{userData.data.user.followings}</Text>
+                    <Text style={tw`text-sm font-medium`}>following</Text>
+                  </TouchableOpacity>
+                </View>
+              ) : null}
+            </View>
           </View>
         <View style={styles.bioContainer}>
             {userData ? (
@@ -167,7 +173,7 @@ function OtherProfileScreen(props) {
           {otherUserPosts.map((item, index) => (
             <View key={index} style={styles.postItem}>
               <View style={tw`flex flex-row mb-2`}>
-                {renderPostView(item.url)}
+                {renderPostView(item)}
               </View>
             </View>
           ))}
