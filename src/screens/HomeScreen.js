@@ -24,7 +24,7 @@ import { useNavigation } from '@react-navigation/native';
 
 const windowDimensions = Dimensions.get("window");
 const numVisibleImages = 3;
-const imageSize = windowDimensions.width / numVisibleImages;
+const imageSize = 100;
 
 const HomeScreen = () => {
   const [iconColor, setIconColor] = useState({});
@@ -166,7 +166,7 @@ const HomeScreen = () => {
 
   const renderCarouselItem = ({ item }) => (
     <TouchableOpacity onPress={() => openModal(item.id)}>
-      <View style={{ width: imageSize, height: imageSize }}>
+      <View style={{ width: imageSize, height: imageSize, borderRadius: 50, padding: 15, marginHorizontal: 5, alignItems: 'center',borderBlockColor: 'black', borderWidth: 1}}>
         <Image
           style={tw`flex-1  w-full h-full aspect-ratio: 1 rounded-lg`}
           resizeMode="contain"
@@ -179,6 +179,7 @@ const HomeScreen = () => {
   const renderItem = ({ item }) => (
     <ScrollView>
       <View key={item.id} style={tw`px-2`}>
+        <View style={{width: "100%", height: 0.5, backgroundColor: "gray", marginVertical: 10}}></View>
         <TouchableOpacity style={tw`flex-row p-2 items-center`} onPress={() => navigation.navigate('OtherProfileScreen', { username: item.user.username })}>
           <View style={tw`w-1/12`}>
             {item.user.avatar ? (
@@ -218,13 +219,12 @@ const HomeScreen = () => {
             activeSlideAlignment="start" 
             renderItem={({ item: product }) => (
               <TouchableOpacity onPress={() => openModal(product)}>
-                <View style={{ width: imageSize, height: imageSize }}>
+                <View style={{ width: imageSize, height: imageSize, borderRadius: 100, padding: 5, marginHorizontal: 5, alignItems: 'center', borderBlockColor: 'black', borderWidth: 1}}>
                   <Image
-                    style={tw`flex-1 ml-2 w-25 h-full aspect-ratio: 1 rounded-lg`}
+                    style={tw`flex-1 w-16 h-full aspect-ratio: 1 rounded-lg`}
                     resizeMode="contain"
                     source={iconUrl(product.category_id)}
                   />
-                  {/* <Text style={tw`text-center`}>{product.name}</Text> */}
                 </View>
               </TouchableOpacity>
             )}

@@ -23,7 +23,7 @@ import { useNavigation } from '@react-navigation/native';
 
 const windowDimensions = Dimensions.get("window");
 const numVisibleImages = 3;
-const imageSize = windowDimensions.width / numVisibleImages;
+const imageSize = 100;
 
 const PostViewScreen = (props) => {
   const [iconColor, setIconColor] = useState({});
@@ -142,7 +142,7 @@ const PostViewScreen = (props) => {
 
   const renderCarouselItem = ({ item }) => (
     <TouchableOpacity onPress={() => openModal(item.id)}>
-      <View style={{ width: imageSize, height: imageSize }}>
+      <View style={{ width: imageSize, height: imageSize, borderRadius: 50, padding: 15, marginHorizontal: 5, alignItems: 'center',borderBlockColor: 'black', borderWidth: 1}}>
         <Image
           style={tw`flex-1  w-full h-full aspect-ratio: 1 rounded-lg`}
           resizeMode="contain"
@@ -194,13 +194,12 @@ const PostViewScreen = (props) => {
             activeSlideAlignment="start" 
             renderItem={({ item: product }) => (
               <TouchableOpacity onPress={() => openModal(product)}>
-                <View style={{ width: imageSize, height: imageSize }}>
+                <View style={{ width: imageSize, height: imageSize, borderRadius: 50, padding: 15, marginHorizontal: 5, alignItems: 'center',borderBlockColor: 'black', borderWidth: 1}}>
                   <Image
-                    style={tw`flex-1 ml-2 w-25 h-full aspect-ratio: 1 rounded-lg`}
+                    style={tw`flex-1  w-full h-full aspect-ratio: 1 rounded-lg`}
                     resizeMode="contain"
                     source={iconUrl(product.category_id)}
                   />
-                  {/* <Text style={tw`text-center`}>{product.name}</Text> */}
                 </View>
               </TouchableOpacity>
             )}
